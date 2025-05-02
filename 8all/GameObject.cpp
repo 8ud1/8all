@@ -7,14 +7,14 @@
 
 GameObject::GameObject(const std::string& name)
 {
+
 }
 
 void GameObject::Update(float deltaTime)
 {
-
 	if (rigidBody && transform)
 	{
-		rigidBody->Update(transform.get(), deltaTime);
+		rigidBody->Update(*transform, deltaTime);
 	}
 }
 

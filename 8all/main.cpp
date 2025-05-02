@@ -3,7 +3,7 @@
 int main(int argc, char* argv[])
 {
 	Game game;
-	if (!game.Start("8all Game", 1280, 720))
+	if (!game.Start("8all Game"))
 	{
 		return -1;
 	}

@@ -6,8 +6,7 @@
 #include <vector>
 
 #include "GameObject.h"
-
-class Renderer;
+#include "Renderer.h"
 
 class Scene
 {
@@ -15,7 +14,6 @@ class Scene
 protected:
 
 	std::vector<std::unique_ptr<GameObject>> gameObjects;
-
 
 	template <typename T, typename... Args>
 
@@ -34,7 +32,7 @@ public:
 	virtual void Enter() = 0;
 	virtual void Exit() = 0;
 	virtual void HandleInputs(const SDL_Event& event) = 0;
-	virtual void Update(float deltaTime) = 0;
-	virtual void Render(Renderer& renderer) = 0;
+	virtual void Update(float deltaTime);
+	virtual void Render(Renderer& renderer);
 };
 

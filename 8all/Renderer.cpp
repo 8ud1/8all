@@ -44,6 +44,17 @@ void Renderer::DrawRect(const SDL_FRect& rect, SDL_Color color)
 	SDL_RenderFillRect(renderer, &rect);
 }
 
+void Renderer::DrawRect(Transform& transform, SDL_Color color)
+{
+
+	SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
+
+	SDL_FRect rect = { transform.position.x, transform.position.y, transform.scale.x, transform.scale.y };
+	SDL_RenderFillRect(renderer, &rect);
+}
+
+
+
 void Renderer::DrawTexture(const std::string& textureID, const SDL_FRect& rect)
 {
 	SDL_Texture* texture = resourceManager->GetTexture(textureID);
@@ -65,7 +76,7 @@ void Renderer::DrawText(const std::string& text, const std::string& fontId, SDL_
 	if (!surface) return;
 
 	SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, surface);
-	SDL_FRect rect = { x, y, surface->w, surface->h };
+	SDL_FRect rect = { x - surface->w * .5f, y -surface->h * 0.5f, surface->w, surface->h };
 
 	SDL_DestroySurface(surface);
 

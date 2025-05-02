@@ -13,6 +13,6 @@ public :
 	bool isStatic = false;
 
 	void ApplyForce(SDL_FPoint& force);
-	void Update(Transform* transform, float deltaTime);
+	void Update(Transform& transform, float deltaTime);
 };
 

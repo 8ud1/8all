@@ -1,8 +1,11 @@
 #include <iostream>
 #include "Game.h"
- 
 
 #include "MainMenu.h"
+#include "InGameScreen.h"
+
+#include "Utilities.h"
+#include "Renderer.h"
 
 void Game::HandleInputs()
 {
@@ -11,6 +14,13 @@ void Game::HandleInputs()
 	while (SDL_PollEvent(&event))
 	{
 		currentScene->HandleInputs(event);
+
+		switch (event.type)
+		{
+		case SDL_EVENT_QUIT:
+			isRunning = false;
+			break;
+		}
 	}
 }
 
@@ -23,36 +33,22 @@ void Game::Update()
 void Game::Render()
 {
 	renderer->Clear();
-	ShowStats();
 	if (currentScene) currentScene->Render(*renderer);
+	ShowStats();
 	renderer->Present();
-}
-
-void Game::Test()
-{
-	
-	SDL_FRect ballRect = { 100,100,256,256 };
-	renderer->DrawTexture(Resources::BALL, ballRect);
-
-	SDL_Color white = { 255,255,255,255 };
-	renderer->DrawText("8all", Resources::FONT_TITLE, white, 720.0f, 450.0f);
-	renderer->DrawText("billar Game", Resources::FONT_REGULAR,white, 720.0f, 500.0f);
 }
 
 void Game::ShowStats()
 {
-
 	SDL_FRect rect = { 0, 0, 1280, 25 };
 	SDL_Color bgColor = { 0, 50, 0, 255 };
 	SDL_Color color = { 0, 255, 0, 255 };
 
 	renderer->DrawRect(rect, bgColor);
 	std::string fpsText = "FPS: " + std::to_string(static_cast<int>(1.0f / Time::DeltaTime()));
-	renderer->DrawText(fpsText,Resources::FONT_LITTLE, color, 10.0f, 5.0f);
-	renderer->DrawText("Delta Time: " + std::to_string(Time::DeltaTime()), Resources::FONT_LITTLE, color, 50.0f, 5.0f);
+	renderer->DrawText(fpsText,Resources::FONT_LITTLE, color, 20.0f, 5.0f);
+	renderer->DrawText("Delta Time: " + std::to_string(Time::DeltaTime()), Resources::FONT_LITTLE, color, 200.0f, 5.0f);
 }
-
-
 
 
 Game::Game() : window(nullptr),renderer(nullptr), isRunning(false), deltaTime(0.0f) 
@@ -63,11 +59,10 @@ Game::Game() : window(nullptr),renderer(nullptr), isRunning(false), deltaTime(0.
 
 Game::~Game()
 {
-	delete(window);
-	window = nullptr;
+	SDL_DestroyWindow(window);
 }
 
-bool Game::Start(const char* title, int width, int height)
+bool Game::Start(const char* title)
 {
 	if (!SDL_Init(SDL_INIT_VIDEO))
 	{
@@ -82,14 +77,14 @@ bool Game::Start(const char* title, int width, int height)
 	}
 
 
-	window = SDL_CreateWindow(title, width, height, SDL_WINDOW_OPENGL);
+	window = SDL_CreateWindow(title, Utilities::SCREEN_WIDTH, Utilities::SCREEN_HEIGHT, SDL_WINDOW_OPENGL);
 	if (window == NULL)
 	{
 		SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Could not create window: %s\n", SDL_GetError());
 		return false;
 	}
 
-	renderer = new Renderer(window);
+	renderer = std::make_unique<Renderer>(window);
 
 
 	//Todo - load resources on load Scene
@@ -118,8 +113,10 @@ void Game::Run()
 		Update();
 		Render();
 
+		ChangeScene();
+
 		uint64_t frameEnd = SDL_GetTicks();   // ms
-		float elapsedMs = static_cast<float>(frameEnd - frameStart);
+		float elapsedMs = static_cast<float>(frameEnd) - static_cast<float>(frameStart);
 
 		if (elapsedMs < targetFrameMs) {
 			SDL_Delay(static_cast<uint32_t>(targetFrameMs - elapsedMs));
@@ -129,24 +126,30 @@ void Game::Run()
 
 void Game::Cleanup()
 {
-	delete(renderer);
-	renderer = nullptr;
 	if (window) SDL_DestroyWindow(window);
 	window = nullptr;
 }
 
-void Game::ChangeScene(SceneType type)
+void Game::RequestChangeScene(SceneType type)
 {
-	if (type == activeSceneType) return;
+	if (type == activeSceneType || isSceneChangeRequested) return;
 
-	if (currentScene )
+	requestedSceneType = type;
+	isSceneChangeRequested = true;
+}
+
+void Game::ChangeScene()
+{
+	if (!isSceneChangeRequested) return;
+
+	if (currentScene)
 	{
 		currentScene->Exit();
-		delete(currentScene);
-		currentScene = nullptr;
+		currentScene.reset();
 	}
 
-	LoadScene(type);
+	LoadScene(requestedSceneType);
+	isSceneChangeRequested = false;
 }
 
 
@@ -156,13 +159,13 @@ void Game::LoadScene(SceneType type)
 	switch (type)
 	{
 	case SceneType::MAIN_MENU:
-		currentScene = new MainMenu();
+		currentScene = std::make_unique<MainMenu>(*this);
 		break;
 	case SceneType::GAME:
-		currentScene = new MainMenu();
+		currentScene = std::make_unique<InGameScreen>(*this);
 		break;
 	case SceneType::RESULT:
-		currentScene = new MainMenu();
+		currentScene = std::make_unique<MainMenu>(*this);
 		break;
 	default:
 		return;
@@ -170,4 +173,4 @@ void Game::LoadScene(SceneType type)
 
 	activeSceneType = type;
 	currentScene->Enter();
-}
+}  

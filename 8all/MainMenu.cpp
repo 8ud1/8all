@@ -1,45 +1,52 @@
 #include "MainMenu.h"
-#include <stdio.h>
+
 #include <SDL3/SDL.h>
-#include "Ball.h"
-
-#include "Rigidbody.h"
-
-
-#include <cstdlib>
+#include <stdio.h>
 #include <memory>
+#include <cstdlib>
 
-void MainMenu::MoveBalls(SDL_FPoint& force)
+#include "Ball.h"
+#include "Rigidbody.h"
+#include "UITextButton.h"
+#include "Game.h"
+#include "Utilities.h"
+
+
+
+MainMenu::MainMenu(Game& game)
+	:game(game)
 {
-	SDL_FPoint forceVector = { force.x, force.y };
-	for (auto& gameObject : gameObjects)
-	{
-		Ball* ball = dynamic_cast<Ball*>(gameObject.get());
-		if (ball)
-		{
-			forceVector.x = force.x * static_cast<float>(rand()) / RAND_MAX * (1.8f - 0.2f);
-			forceVector.y = force.y * static_cast<float>(rand()) / RAND_MAX * (1.8f - 0.2f);
 
-			ball->rigidBody->ApplyForce(forceVector);
-		}
-	}
-}
-
-MainMenu::MainMenu()
-{
 }
 
 void MainMenu::Enter()
 {
+	Instantiate<UITextButton>(
+		SDL_FPoint{ Utilities::SCREEN_WIDTH * 0.5f - 100.0f, Utilities::SCREEN_HEIGHT * 0.5f},
+		SDL_FPoint{ 200.0f,50.0f },
+		[this]() {game.RequestChangeScene(SceneType::GAME); },
+		("Start Game"),
+		SDL_Color{ 170,170,170,255 },
+		SDL_Color{ 0,170,0,255 }
+	);
 
-	for (int i = 0; i < 5; i++)
-	{
-		SDL_FPoint pos = { 100 + i * 50, 100 + i * 50 };
-		Instantiate<Ball>(pos);
-	}
+	Instantiate<UITextButton>(
+		SDL_FPoint{ Utilities::SCREEN_WIDTH * 0.5f - 100.0f, Utilities::SCREEN_HEIGHT * 0.5f + 75.0f },
+		SDL_FPoint{ 200.0f,50.0f },
+		[&]() {SDL_Log("Ranking"); },
+		("Ranking"),
+		SDL_Color{ 170,170,170,255 },
+		SDL_Color{ 0,170,0,255 }
+	);
 
-	SDL_FPoint position = { 500, 100 };
-	Instantiate<Ball>(position);
+	Instantiate<UITextButton>(
+		SDL_FPoint{ Utilities::SCREEN_WIDTH * 0.5f - 100.0f, Utilities::SCREEN_HEIGHT * 0.5f + 75.0f * 2.0f },
+		SDL_FPoint{ 200.0f,50.0f },
+		[&]() {SDL_Quit(); },
+		("Quit"),
+		SDL_Color{ 170,170,170,255 },
+		SDL_Color{ 0,170,0,255 }
+	);
 
 }
 
@@ -55,8 +62,6 @@ void MainMenu::Exit()
 
 void MainMenu::HandleInputs(const SDL_Event& event)
 {
-
-
 	float force = 20.0f;
 	SDL_FPoint forceVector = { 0.0f, 0.0f };
 
@@ -92,30 +97,20 @@ void MainMenu::HandleInputs(const SDL_Event& event)
 	default:
 		break;
 	}
-
-	MoveBalls(forceVector);
-}
-
-
-
-
-void MainMenu::Update(float deltaTime)
-{
-
-	for (auto& obj : gameObjects)
-	{
-		obj->Update(deltaTime);
-	}
 }
 
 void MainMenu::Render(Renderer& renderer)
 {
-	for (auto& obj : gameObjects)
-	{
-		obj->Render(renderer);
-	}
+	Scene::Render(renderer);
 
-	// Render the main menu scene.
-	// This could include drawing textures, fonts, etc.
-	// For example, you might want to draw a background image, menu items, and other UI elements.
+
+	renderer.DrawText(
+		"8all",
+		Resources::FONT_TITLE,
+		SDL_Color{ 255,255,255,255 },
+		Utilities::SCREEN_WIDTH * 0.5f,
+		Utilities::SCREEN_HEIGHT * 0.25f
+		);
+
 }
+

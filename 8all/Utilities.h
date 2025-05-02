@@ -2,7 +2,6 @@
 
 #include <SDL3/SDL.h>
 
-
 enum class SceneType
 {
 	MAIN_MENU,

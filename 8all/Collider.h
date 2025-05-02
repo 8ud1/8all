@@ -5,9 +5,9 @@
 class Collider
 {
 public :
-	SDL_FPoint center;
-	float radius;
 
-	bool Intersects(const Collider& other) const;
+	virtual ~Collider() = default;
+
+	//virutal
 };
 

@@ -3,12 +3,11 @@
 #include <string>
 #include <memory>
 
+#include "Transform.h",
+#include "RenderComponent.h"
+#include "Rigidbody.h"
 
 class Renderer;
-class Transform;
-class RenderComponent;
-class Rigidbody;
-
 
 class GameObject
 {
@@ -26,6 +25,5 @@ public:
 	virtual void Update(float deltaTime);
 	virtual void Render(Renderer& renderer);
 
-	//bool IsVisible() const;
 };
 

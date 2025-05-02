@@ -9,16 +9,14 @@ class Ball;
 
 class MainMenu : public Scene
 {
-
 private :
-	void MoveBalls(SDL_FPoint& force);
+	Game& game;
 public:
-	MainMenu();
+	MainMenu(Game& game);
 	void Enter() override;
 	void Exit() override;
-	void HandleInputs(const SDL_Event& event) override;
-	void Update(float deltaTime) override;
+	void HandleInputs(const SDL_Event& event) override;	
+
 	void Render(Renderer& renderer) override;
-	
 };
 

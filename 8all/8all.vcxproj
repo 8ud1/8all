@@ -134,6 +134,7 @@
     <ClCompile Include="Collider.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GameObject.cpp" />
+    <ClCompile Include="InGameScreen.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MainMenu.cpp" />
     <ClCompile Include="RenderComponent.cpp" />
@@ -142,19 +143,23 @@
     <ClCompile Include="Rigidbody.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="Time.cpp" />
-    <ClCompile Include="Transform.cpp" />
     <ClCompile Include="Trigger.cpp" />
+    <ClCompile Include="UIButton.cpp" />
+    <ClCompile Include="UITextButton.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Ball.h" />
     <ClInclude Include="Collider.h" />
     <ClInclude Include="GameObject.h" />
+    <ClInclude Include="InGameScreen.h" />
     <ClInclude Include="MainMenu.h" />
     <ClInclude Include="RenderComponent.h" />
     <ClInclude Include="Rigidbody.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="Transform.h" />
     <ClInclude Include="Trigger.h" />
+    <ClInclude Include="UIButton.h" />
+    <ClInclude Include="UITextButton.h" />
     <ClInclude Include="Utilities.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="Renderer.h" />

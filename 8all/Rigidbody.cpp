@@ -9,13 +9,13 @@ void Rigidbody::ApplyForce(SDL_FPoint& force)
 	}
 }
 
-void Rigidbody::Update(Transform* transform, float deltaTime)
+void Rigidbody::Update(Transform& transform, float deltaTime)
 {
 	if (!isStatic)
 	{
 
-		transform->position.x += velocity.x * deltaTime;
-		transform->position.y += velocity.y * deltaTime;
+		transform.position.x = transform.position.x + velocity.x * deltaTime;
+		transform.position.y += velocity.y * deltaTime;
 		
 		// Apply damping
 		velocity.x *= 0.98f; // Damping factor
