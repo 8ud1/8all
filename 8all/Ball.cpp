@@ -8,9 +8,10 @@
 #include "Rigidbody.h"
 #include "CircleCollider.h"
 
-Ball::Ball(std::string name, const SDL_FPoint& startPos)
- :GameObject(name,GameObjectType::Ball)
+Ball::Ball(std::string name , const SDL_FPoint& startPos)
+ :PhysicsObject(name,GameObjectType::Ball)
 {
+
 	transform = std::make_unique<Transform>();
 	transform->position = startPos;
 
@@ -19,23 +20,20 @@ Ball::Ball(std::string name, const SDL_FPoint& startPos)
 
 	//todo - passar por parametro el radio
 	collider = std::make_unique<CircleCollider>(startPos,30.0f);
+	circleCollider = static_cast<CircleCollider*>(collider.get());
 
 	rigidbody = std::make_unique < Rigidbody>();
 	rigidbody->mass = 1.0f;
-
-
 }
 
 void Ball::Update(float deltaTime)
 {
 	rigidbody->Update(*transform, deltaTime);
-	collider->center = transform->position;
-
+	circleCollider->center = transform->position;
 }
 
 void Ball::Render(Renderer& renderer)
 {
 	renderComponent->Render(renderer, transform->position);
-
-	collider->DrawDebug(renderer);
+	circleCollider->DrawDebug(renderer);
 }

@@ -133,7 +133,6 @@
     <ClCompile Include="Ball.cpp" />
     <ClCompile Include="BoxCollider.cpp" />
     <ClCompile Include="CircleCollider.cpp" />
-    <ClCompile Include="Collider.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="InGameScreen.cpp" />
@@ -148,15 +147,18 @@
     <ClCompile Include="Trigger.cpp" />
     <ClCompile Include="UIButton.cpp" />
     <ClCompile Include="UITextButton.cpp" />
+    <ClCompile Include="Wall.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Ball.h" />
     <ClInclude Include="BoxCollider.h" />
     <ClInclude Include="CircleCollider.h" />
     <ClInclude Include="Collider.h" />
+    <ClInclude Include="CollisionInfo.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="InGameScreen.h" />
     <ClInclude Include="MainMenu.h" />
+    <ClInclude Include="PhysicsObject.h" />
     <ClInclude Include="RenderComponent.h" />
     <ClInclude Include="Rigidbody.h" />
     <ClInclude Include="Scene.h" />
@@ -170,6 +172,7 @@
     <ClInclude Include="ResourceManager.h" />
     <ClInclude Include="Resources.h" />
     <ClInclude Include="Time.h" />
+    <ClInclude Include="Wall.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

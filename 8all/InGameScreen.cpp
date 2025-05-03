@@ -12,9 +12,60 @@
 #include "Game.h"
 #include "Utilities.h"
 #include "Rigidbody.h"
+#include "Wall.h"
 
 #include "CircleCollider.h"
+#include "BoxCollider.h"
+#include "CollisionInfo.h"
 
+void InGameScreen::Physics()
+{
+
+	CollisionInfo info;
+	if (ball->Collider()->CheckCollision(*wall->Collider(),info))
+	{
+
+		SDL_Log("Collision detected! %f", info.penetration);
+		
+
+		float dot = ball->rigidbody->velocity.x * info.normal.x + ball->rigidbody->velocity.y * info.normal.y;
+
+		SDL_FPoint force = SDL_FPoint
+		{
+			ball->rigidbody->velocity.x * 0.5f,
+			ball->rigidbody->velocity.y * 0.5f
+		};
+
+		ball->transform->position.x += info.normal.x * info.penetration;
+		ball->transform->position.y += info.normal.y * info.penetration;
+
+		ball->rigidbody->velocity.x -= 2.0f * dot * info.normal.x;
+		ball->rigidbody->velocity.y -= 2.0f * dot * info.normal.y;
+
+	}
+
+	if (ball->Collider()->CheckCollision(*collider->Collider(), info))
+	{
+
+		SDL_Log("Collision detected! %f", info.penetration);
+
+
+		float dot = ball->rigidbody->velocity.x * info.normal.x + ball->rigidbody->velocity.y * info.normal.y;
+
+		SDL_FPoint force = SDL_FPoint
+		{
+			ball->rigidbody->velocity.x * 0.5f,
+			ball->rigidbody->velocity.y * 0.5f
+		};
+
+		ball->transform->position.x -= info.normal.x * info.penetration;
+		ball->transform->position.y -= info.normal.y * info.penetration;
+
+		ball->rigidbody->velocity.x -= 2.0f * dot * info.normal.x;
+		ball->rigidbody->velocity.y -= 2.0f * dot * info.normal.y;
+
+	}
+}
 
 InGameScreen::InGameScreen(Game& game)
 	: game(game), ball(nullptr)
@@ -40,6 +91,12 @@ void InGameScreen::Enter()
 		std::string("Main Menu"),
 		SDL_Color{ 170,170,170,170},
 		SDL_Color{ 255,255,255,255 }
+	);
+
+	wall = Instantiate<Wall>(
+		"wall",
+		SDL_FPoint{ 800.0f, 0.0f },
+		SDL_FPoint{ 50.0f, Utilities::SCREEN_HEIGHT }
 	);
 
 }
@@ -91,46 +148,7 @@ void InGameScreen::HandleInputs(const SDL_Event& event)
 void InGameScreen::Update(float deltaTime)
 {
 	Scene::Update(deltaTime);
-
-
-	if (ball->collider->CheckCollision(*collider->collider))
-	{
-		SDL_Log("Collision Success");
-
-		SDL_FPoint normal =
-		{
-			collider->transform->position.x - ball->transform->position.x,
-			collider->transform->position.y - ball->transform->position.y,
-		};
-
-		float lenght = sqrtf(normal.x * normal.x + normal.y * normal.y);
-
-		if (lenght != 0.0f)
-		{
-			normal.x /= lenght;
-			normal.y /= lenght;
-		}
-
-		float dot = ball->rigidbody->velocity.x * normal.x + ball->rigidbody->velocity.y * normal.y;
-
-		SDL_FPoint force = SDL_FPoint
-		{
-			ball->rigidbody->velocity.x * 0.5f,
-			ball->rigidbody->velocity.y * 0.5f
-		};
-
-		collider->rigidbody->ApplyForce(force);
-			
-
-		ball->rigidbody->velocity.x -= 2.0f * dot * normal.x;
-		ball->rigidbody->velocity.y -= 2.0f * dot * normal.y;
-
-	}
-	else
-	{
-		SDL_Log("Collision Failed");
-	}
-	
+	Physics();
 }
 
 

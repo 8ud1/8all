@@ -6,6 +6,7 @@
 
 class Ball;
 class Game;
+class Wall;
 
 class InGameScreen : public Scene
 {
@@ -14,6 +15,10 @@ private :
 
 	Ball* ball;
 	Ball* collider;
+
+	Wall* wall;
+
+	void Physics();
 
 public:
 	InGameScreen(Game& game);

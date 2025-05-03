@@ -12,9 +12,9 @@ public:
 
 	BoxCollider(const SDL_FRect& rect) : rect(rect) {}
 
-	bool CheckCollision(const Collider& other) const override;
-	bool CheckCollisionWithCircle(const CircleCollider& other) const override;
-	bool CheckCollisionWithBox(const BoxCollider& other) const override;
+	bool CheckCollision(const Collider& other, CollisionInfo& info) const override;
+	bool CheckCollisionWithCircle(const CircleCollider& other, CollisionInfo& info) const override;
+	bool CheckCollisionWithBox(const BoxCollider& other, CollisionInfo& info) const override;
 
 
 	void DrawDebug(Renderer& renderer) const override;
