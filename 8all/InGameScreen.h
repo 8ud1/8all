@@ -12,13 +12,11 @@ class InGameScreen : public Scene
 {
 private :
 	Game& game;
+	Ball* ball = nullptr;
 
-	Ball* ball;
-	Ball* collider;
+	bool isCharging = false;
 
-	Wall* wall;
-
-	void Physics();
+	SDL_FPoint chargingVector = SDL_FPoint{ 0.0f,0.0f };
 
 public:
 	InGameScreen(Game& game);

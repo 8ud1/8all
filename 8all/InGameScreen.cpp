@@ -14,123 +14,137 @@
 #include "Rigidbody.h"
 #include "Wall.h"
 
-#include "CircleCollider.h"
-#include "BoxCollider.h"
-#include "CollisionInfo.h"
-
-void InGameScreen::Physics()
-{
-
-	CollisionInfo info;
-	if (ball->Collider()->CheckCollision(*wall->Collider(),info))
-	{
-
-		SDL_Log("Collision detected! %f", info.penetration);
-		
-
-		float dot = ball->rigidbody->velocity.x * info.normal.x + ball->rigidbody->velocity.y * info.normal.y;
-
-		SDL_FPoint force = SDL_FPoint
-		{
-			ball->rigidbody->velocity.x * 0.5f,
-			ball->rigidbody->velocity.y * 0.5f
-		};
-
-		ball->transform->position.x += info.normal.x * info.penetration;
-		ball->transform->position.y += info.normal.y * info.penetration;
-
-		ball->rigidbody->velocity.x -= 2.0f * dot * info.normal.x;
-		ball->rigidbody->velocity.y -= 2.0f * dot * info.normal.y;
-
-	}
-
-	if (ball->Collider()->CheckCollision(*collider->Collider(), info))
-	{
-
-		SDL_Log("Collision detected! %f", info.penetration);
-
-
-		float dot = ball->rigidbody->velocity.x * info.normal.x + ball->rigidbody->velocity.y * info.normal.y;
-
-		SDL_FPoint force = SDL_FPoint
-		{
-			ball->rigidbody->velocity.x * 0.5f,
-			ball->rigidbody->velocity.y * 0.5f
-		};
-
-		ball->transform->position.x -= info.normal.x * info.penetration;
-		ball->transform->position.y -= info.normal.y * info.penetration;
-
-		ball->rigidbody->velocity.x -= 2.0f * dot * info.normal.x;
-		ball->rigidbody->velocity.y -= 2.0f * dot * info.normal.y;
-
-	}
-}
-
 InGameScreen::InGameScreen(Game& game)
-	: game(game), ball(nullptr)
+	: game(game)
 {
 }
 
 void InGameScreen::Enter()
 {
-	collider = Instantiate<Ball>(
-		"ball",
-			SDL_FPoint {Utilities::SCREEN_WIDTH * 0.5f, Utilities::SCREEN_HEIGHT * 0.5f}
-	);
+
+	for (int i = 0; i <= 5; i++)
+	{
+		float x = Utilities::SCREEN_WIDTH * 0.65f + i * 55 ;
+
+		for (int j = 0; j < i; j++)
+		{
+			float y = Utilities::SCREEN_HEIGHT * 0.5f - (i * 0.5f * 55) + 55 * j + 25;
+
+			Instantiate<Ball>(
+				"ball_" + std::to_string(i),
+				SDL_FPoint{ x, y }
+			);
+		}
+	}
 
 	ball = Instantiate<Ball>(
 		"ball 2",
 		SDL_FPoint{ 200.0f,Utilities::SCREEN_HEIGHT * 0.5f }
 	);
 
-	Instantiate<UITextButton>(
-		SDL_FPoint{ 0.0f , 0.0f },
-		SDL_FPoint{ 200.0f, 50.0f },
-		[this]() {game.RequestChangeScene(SceneType::MAIN_MENU); },
-		std::string("Main Menu"),
-		SDL_Color{ 170,170,170,170},
-		SDL_Color{ 255,255,255,255 }
-	);
+	// environment
 
-	wall = Instantiate<Wall>(
-		"wall",
-		SDL_FPoint{ 800.0f, 0.0f },
+	 Instantiate<Wall>(
+		"leftWall",
+		SDL_FPoint{ 0.0f, 0.0f },
 		SDL_FPoint{ 50.0f, Utilities::SCREEN_HEIGHT }
 	);
+
+	 Instantiate<Wall>(
+		 "rightWall",
+		 SDL_FPoint{ Utilities::SCREEN_WIDTH - 50.0f, 0.0f },
+		 SDL_FPoint{ 50.0f, Utilities::SCREEN_HEIGHT }
+	 );
+
+	 Instantiate<Wall>(
+		 "topWall",
+		 SDL_FPoint{ 50.0f,0.0f },
+		 SDL_FPoint{ Utilities::SCREEN_WIDTH -100.0f,50.0f }
+	 );
+
+	 Instantiate<Wall>(
+		 "bottomWall",
+		 SDL_FPoint{ 50.0f, Utilities::SCREEN_HEIGHT - 50.0f },
+		 SDL_FPoint{ Utilities::SCREEN_WIDTH - 100.0f,50.0f }
+	 );
 
 }
 
 void InGameScreen::Exit()
 {
-	ball = nullptr;
+	
 }
 
 void InGameScreen::HandleInputs(const SDL_Event& event)
 {
 
-	float force = 100.0f;
-	SDL_FPoint forceVector = { 0.0f, 0.0f };
+	float mouseX, mouseY;
+
+	SDL_GetMouseState(&mouseX, &mouseY);
+	SDL_FPoint mousePos = { mouseX, mouseY };
+
+	if (isCharging)
+	{
+		chargingVector =
+			SDL_FPoint
+		{
+			(ball->transform->position.x - mousePos.x),
+			(ball->transform->position.y - mousePos.y),
+		};
+	}
 
 	switch (event.type)
 	{
+
+	case SDL_EVENT_MOUSE_BUTTON_UP:
+		if (event.button.button == SDL_BUTTON_LEFT)
+		{
+
+			if (!isCharging) break;
+
+			SDL_FPoint shotVector =
+				SDL_FPoint
+			{
+				(ball->transform->position.x - mousePos.x) * 5.0f,
+				(ball->transform->position.y - mousePos.y) * 5.0f,
+			};
+
+
+			ball->rigidbody->ApplyForce(shotVector);
+
+			isCharging = false;
+
+		}
+		break;
+
+	case SDL_EVENT_MOUSE_BUTTON_DOWN:
+
+		if (event.button.button == SDL_BUTTON_LEFT)
+		{
+			SDL_FRect ballRect =
+			{
+				ball->transform->position.x - ball->transform->scale.x * 0.5f,
+				ball->transform->position.y - ball->transform->scale.y * 0.5f,
+				ball->transform->scale.x,
+				ball->transform->scale.y
+			};
+
+			isCharging = SDL_PointInRectFloat(&mousePos, &ballRect);
+		}
+	
+
+		break;
 	case SDL_EVENT_KEY_DOWN:
 
 		switch (event.key.scancode)
 		{
 		case SDL_SCANCODE_W:
-			forceVector.y = -force;
 			break;
 		case SDL_SCANCODE_A:
-
-			forceVector.x = -force;
-
 			break;
 		case SDL_SCANCODE_S:
-			forceVector.y = force;
 			break;
 		case SDL_SCANCODE_D:
-			forceVector.x = force;
 			break;
 		}
 		break;
@@ -140,22 +154,39 @@ void InGameScreen::HandleInputs(const SDL_Event& event)
 	default:
 		break;
 	}
-
-	ball->rigidbody->ApplyForce(forceVector);
-
 }
 
 void InGameScreen::Update(float deltaTime)
 {
 	Scene::Update(deltaTime);
-	Physics();
+	//Physics();
 }
 
 
 void InGameScreen::Render(Renderer& renderer)
 {
 	Scene::Render(renderer);
-	renderer.DrawText("8ball", Resources::FONT_TITLE, Utilities::WHITE, Utilities::SCREEN_WIDTH * 0.5f, Utilities::SCREEN_HEIGHT * 0.1f);
-	
-	
+
+
+	SDL_Point ballPos = SDL_Point
+	{
+		(int)ball->transform->position.x,
+		(int)ball->transform->position.y
+	};
+
+	renderer.DrawCircle(ballPos, 50.0f, SDL_Color{255,0,0,255});
+	if (isCharging)
+	{
+		for (int i = 1; i < 10; ++i)
+		{
+
+			SDL_FRect rect = SDL_FRect{
+			(ball->transform->position.x + chargingVector.x * ( 0.1f * i )),
+			(ball->transform->position.y + chargingVector.y * ( 0.1f * i )),
+			5.0f,5.0f
+			};
+
+			renderer.DrawRect(rect, SDL_Color{ 255,0,0,255 });
+		}
+	}
 }

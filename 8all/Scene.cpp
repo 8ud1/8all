@@ -3,6 +3,8 @@
 
 void Scene::Update(float deltaTime)
 {
+	physicsSystem.Update(deltaTime);
+
 	for (auto& obj : gameObjects)
 	{
 		obj->Update(deltaTime);

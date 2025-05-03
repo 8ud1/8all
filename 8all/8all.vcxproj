@@ -138,6 +138,7 @@
     <ClCompile Include="InGameScreen.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MainMenu.cpp" />
+    <ClCompile Include="PhysicsSystem.cpp" />
     <ClCompile Include="RenderComponent.cpp" />
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="ResourceManager.cpp" />
@@ -159,6 +160,7 @@
     <ClInclude Include="InGameScreen.h" />
     <ClInclude Include="MainMenu.h" />
     <ClInclude Include="PhysicsObject.h" />
+    <ClInclude Include="PhysicsSystem.h" />
     <ClInclude Include="RenderComponent.h" />
     <ClInclude Include="Rigidbody.h" />
     <ClInclude Include="Scene.h" />

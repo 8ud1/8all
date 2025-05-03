@@ -1,0 +1,19 @@
+#pragma once
+
+#include <vector>
+#include "PhysicsObject.h"
+#include "CollisionInfo.h"
+
+class PhysicsSystem
+{
+private:
+	std::vector<PhysicsObject*> bodies;
+
+public: 
+	void AddBody(PhysicsObject* body);
+	void ClearBodies();
+
+	void Update(float deltaTime);
+	void ResolveCollision(PhysicsObject* bodyA, PhysicsObject* bodyB, CollisionInfo& info);
+};
+

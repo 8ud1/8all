@@ -27,7 +27,7 @@ public :
 
 	void DrawRect(const SDL_FRect& rect, SDL_Color color);
 	void DrawRect(Transform& transform, SDL_Color color);
-	void DrawCircle(const SDL_Point& center, int radius);
+	void DrawCircle(const SDL_Point& center, int radius, SDL_Color color);
 	void DrawTexture(const std::string& textureID, const SDL_FRect& rect);
 	void DrawText(const std::string& text, const std::string& fontId, SDL_Color color, float x, float y);
 };

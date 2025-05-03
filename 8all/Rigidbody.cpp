@@ -1,5 +1,7 @@
 #include "Rigidbody.h"
 
+#include <cmath>
+
 void Rigidbody::ApplyForce(SDL_FPoint& force)
 {
 	if (!isStatic)
@@ -17,8 +19,14 @@ void Rigidbody::Update(Transform& transform, float deltaTime)
 		transform.position.x = transform.position.x + velocity.x * deltaTime;
 		transform.position.y += velocity.y * deltaTime;
 		
-		// Apply damping
-		velocity.x *= 0.98f; // Damping factor
-		velocity.y *= 0.98f; // Damping factor
+
+		const float frictionFactor = 0.6f;
+
+		velocity.x -= velocity.x * frictionFactor * deltaTime; 
+		velocity.y -= velocity.y * frictionFactor * deltaTime; 
+
+
+		if (std::abs(velocity.x) < 0.01f) velocity.x = 0.0f;
+		if (std::abs(velocity.y) < 0.01f) velocity.y = 0.0f;
 	}
 }

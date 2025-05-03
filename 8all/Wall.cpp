@@ -16,6 +16,8 @@ Wall::Wall(std::string name, const SDL_FPoint& startPos, const SDL_FPoint& size)
 
 	rigidbody = std::make_unique<Rigidbody>();
 	rigidbody->mass = 1.0f;
+
+	rigidbody->isStatic = true; 
 }
 
 void Wall::Update(float deltaTime)

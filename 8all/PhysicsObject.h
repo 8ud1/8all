@@ -19,6 +19,7 @@ public:
 
 	virtual ~PhysicsObject() = default;
 
-	//Collider* Collider() const { return collider.get(); }
+	Collider* GetCollider() const { return collider.get(); }
+	Rigidbody* RigidBody() const { return rigidbody.get(); }
 };
 

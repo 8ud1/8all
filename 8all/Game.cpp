@@ -34,7 +34,7 @@ void Game::Render()
 {
 	renderer->Clear();
 	if (currentScene) currentScene->Render(*renderer);
-	ShowStats();
+	//ShowStats();
 	renderer->Present();
 }
 
@@ -102,11 +102,11 @@ bool Game::Start(const char* title)
 
 void Game::Run()
 {
-	const float targetFrameMs = 1000.0f / 60.0f;
+	//const float targetFrameMs = 1000.0f / 60.0f;
 
 	while (isRunning)
 	{
-		uint64_t frameStart = SDL_GetTicks();
+		//uint64_t frameStart = SDL_GetTicks();
 
 		Time::Update();
 		HandleInputs();
@@ -115,12 +115,12 @@ void Game::Run()
 
 		ChangeScene();
 
-		uint64_t frameEnd = SDL_GetTicks();   // ms
+		/*uint64_t frameEnd = SDL_GetTicks();   // ms
 		float elapsedMs = static_cast<float>(frameEnd) - static_cast<float>(frameStart);
 
 		if (elapsedMs < targetFrameMs) {
 			SDL_Delay(static_cast<uint32_t>(targetFrameMs - elapsedMs));
-		}
+		}*/
 	}
 }
 

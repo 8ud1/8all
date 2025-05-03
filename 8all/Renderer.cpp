@@ -22,7 +22,7 @@ Renderer::~Renderer()
 
 void Renderer::Clear()
 {
-	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+	SDL_SetRenderDrawColor(renderer, 255,255,255,255);
 	SDL_RenderClear(renderer);
 }
 
@@ -57,7 +57,7 @@ void Renderer::DrawRect(Transform& transform, SDL_Color color)
 	SDL_RenderFillRect(renderer, &rect);
 }
 
-void Renderer::DrawCircle(const SDL_Point& center, int radius)
+void Renderer::DrawCircle(const SDL_Point& center, int radius, SDL_Color color)
 {
 
 	const int num_segments = 100;
@@ -69,7 +69,7 @@ void Renderer::DrawCircle(const SDL_Point& center, int radius)
 		int x = static_cast<int>(radius * cosf(theta));
 		int y = static_cast<int>(radius * sinf(theta));
 
-		SDL_SetRenderDrawColor(renderer, 255,255,0,255);
+		SDL_SetRenderDrawColor(renderer, color.r,color.g,color.b,color.a);
 		SDL_RenderPoint(renderer,center.x + x,center.y + y);
 	}
 }
