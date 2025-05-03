@@ -11,13 +11,17 @@ class InGameScreen : public Scene
 {
 private :
 	Game& game;
+
 	Ball* ball;
+	Ball* collider;
 
 public:
 	InGameScreen(Game& game);
-	void Enter();
-	void Exit();
-	void HandleInputs(const SDL_Event& event);
-	void Render(Renderer& renderer);
+	void Enter() override;
+	void Exit() override;
+	void HandleInputs(const SDL_Event& event) override;
+	void Update(float deltaTime) override;
+	void Render(Renderer& renderer) override;
+
 };
 

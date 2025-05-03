@@ -1,5 +1,9 @@
 #include "Renderer.h"
 
+#define _USE_MATH_DEFINES
+#include <math.h>
+
+
 Renderer::Renderer(SDL_Window* window)
 {
 	renderer = SDL_CreateRenderer(window, NULL);
@@ -51,6 +55,23 @@ void Renderer::DrawRect(Transform& transform, SDL_Color color)
 
 	SDL_FRect rect = { transform.position.x, transform.position.y, transform.scale.x, transform.scale.y };
 	SDL_RenderFillRect(renderer, &rect);
+}
+
+void Renderer::DrawCircle(const SDL_Point& center, int radius)
+{
+
+	const int num_segments = 100;
+
+	for (int i = 0; i < num_segments; ++i)
+	{
+		float theta = 2.0f * M_PI * float(i) / float(num_segments);
+
+		int x = static_cast<int>(radius * cosf(theta));
+		int y = static_cast<int>(radius * sinf(theta));
+
+		SDL_SetRenderDrawColor(renderer, 255,255,0,255);
+		SDL_RenderPoint(renderer,center.x + x,center.y + y);
+	}
 }
 
 

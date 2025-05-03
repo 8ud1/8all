@@ -9,6 +9,15 @@ enum class SceneType
 	RESULT
 };
 
+enum class GameObjectType
+{
+	None,
+	Ball,
+	Wall,
+	Hole,
+	UIButton
+};
+
 namespace Utilities
 {
 	const int SCREEN_WIDTH = 1280;

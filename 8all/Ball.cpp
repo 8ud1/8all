@@ -1,28 +1,41 @@
 #include "Ball.h"
 
-#include "Transform.h"
-#include "Rigidbody.h"
-#include "RenderComponent.h"
-
 #include "Resources.h"
+#include "Utilities.h"
 
-Ball::Ball(const SDL_FPoint& startPos)
- :GameObject("ball")
+#include "Transform.h"
+#include "RenderComponent.h"
+#include "Rigidbody.h"
+#include "CircleCollider.h"
+
+Ball::Ball(std::string name, const SDL_FPoint& startPos)
+ :GameObject(name,GameObjectType::Ball)
 {
 	transform = std::make_unique<Transform>();
 	transform->position = startPos;
 
-
 	SDL_FRect rect = { 0.0f, 0.0f, 50.0f, 50.0f };
 	renderComponent = std::make_unique<RenderComponent>(Resources::BALL, rect);
 
-	rigidBody = std::make_unique < Rigidbody>();
-	rigidBody->mass = 1.0f;
+	//todo - passar por parametro el radio
+	collider = std::make_unique<CircleCollider>(startPos,30.0f);
+
+	rigidbody = std::make_unique < Rigidbody>();
+	rigidbody->mass = 1.0f;
 
 
 }
 
 void Ball::Update(float deltaTime)
 {
-	GameObject::Update(deltaTime);
+	rigidbody->Update(*transform, deltaTime);
+	collider->center = transform->position;
+
+}
+
+void Ball::Render(Renderer& renderer)
+{
+	renderComponent->Render(renderer, transform->position);
+
+	collider->DrawDebug(renderer);
 }

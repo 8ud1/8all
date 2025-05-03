@@ -5,23 +5,6 @@
 #include "Rigidbody.h"
 
 
-GameObject::GameObject(const std::string& name)
-{
+GameObject::GameObject(const std::string& name, GameObjectType type)
+	:name(name), type(type), transform(std::make_unique<Transform>()) {}
 
-}
-
-void GameObject::Update(float deltaTime)
-{
-	if (rigidBody && transform)
-	{
-		rigidBody->Update(*transform, deltaTime);
-	}
-}
-
-void GameObject::Render(Renderer& renderer)
-{
-	if (renderComponent && transform)
-	{
-		renderComponent->Render(renderer, transform->position);
-	}
-}

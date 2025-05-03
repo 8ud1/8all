@@ -6,12 +6,14 @@
 #include <cstdlib>
 #include <string>
 
-
 #include "Ball.h"
 #include "UIButton.h"
 #include "UITextButton.h"
 #include "Game.h"
 #include "Utilities.h"
+#include "Rigidbody.h"
+
+#include "CircleCollider.h"
 
 
 InGameScreen::InGameScreen(Game& game)
@@ -21,12 +23,14 @@ InGameScreen::InGameScreen(Game& game)
 
 void InGameScreen::Enter()
 {
-	Instantiate<Ball>(
+	collider = Instantiate<Ball>(
+		"ball",
 			SDL_FPoint {Utilities::SCREEN_WIDTH * 0.5f, Utilities::SCREEN_HEIGHT * 0.5f}
 	);
 
 	ball = Instantiate<Ball>(
-		SDL_FPoint{ 200.0f,300.0f }
+		"ball 2",
+		SDL_FPoint{ 200.0f,Utilities::SCREEN_HEIGHT * 0.5f }
 	);
 
 	Instantiate<UITextButton>(
@@ -80,7 +84,53 @@ void InGameScreen::HandleInputs(const SDL_Event& event)
 		break;
 	}
 
-	ball->rigidBody->ApplyForce(forceVector);
+	ball->rigidbody->ApplyForce(forceVector);
+
+}
+
+void InGameScreen::Update(float deltaTime)
+{
+	Scene::Update(deltaTime);
+
+
+	if (ball->collider->CheckCollision(*collider->collider))
+	{
+		SDL_Log("Collision Success");
+
+		SDL_FPoint normal =
+		{
+			collider->transform->position.x - ball->transform->position.x,
+			collider->transform->position.y - ball->transform->position.y,
+		};
+
+		float lenght = sqrtf(normal.x * normal.x + normal.y * normal.y);
+
+		if (lenght != 0.0f)
+		{
+			normal.x /= lenght;
+			normal.y /= lenght;
+		}
+
+		float dot = ball->rigidbody->velocity.x * normal.x + ball->rigidbody->velocity.y * normal.y;
+
+		SDL_FPoint force = SDL_FPoint
+		{
+			ball->rigidbody->velocity.x * 0.5f,
+			ball->rigidbody->velocity.y * 0.5f
+		};
+
+		collider->rigidbody->ApplyForce(force);
+			
+
+		ball->rigidbody->velocity.x -= 2.0f * dot * normal.x;
+		ball->rigidbody->velocity.y -= 2.0f * dot * normal.y;
+
+	}
+	else
+	{
+		SDL_Log("Collision Failed");
+	}
+	
 }
 
 

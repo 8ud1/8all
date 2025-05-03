@@ -3,6 +3,7 @@
 #include "RenderComponent.h"
 #include "Renderer.h"
 #include "Resources.h"
+#include "Utilities.h"
 
 
 void UIButton::CheckMouseInteraction()
@@ -27,7 +28,7 @@ void UIButton::CheckMouseInteraction()
 }
 
 UIButton::UIButton(SDL_FPoint position, SDL_FPoint size, std::function<void()> clickAction)
-	: GameObject("button"), OnClick(clickAction)
+	: GameObject("button",GameObjectType::UIButton), OnClick(clickAction)
 	
 {
 	isHovered = false;
