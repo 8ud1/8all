@@ -22,8 +22,9 @@ public:
 	InGameScreen(Game& game);
 	void Enter() override;
 	void Exit() override;
+
+	void LogicUpdate(float deltaTime) override;
 	void HandleInputs(const SDL_Event& event) override;
-	void Update(float deltaTime) override;
 	void Render(Renderer& renderer) override;
 
 };

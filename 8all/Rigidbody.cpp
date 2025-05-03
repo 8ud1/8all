@@ -15,12 +15,11 @@ void Rigidbody::Update(Transform& transform, float deltaTime)
 {
 	if (!isStatic)
 	{
-
 		transform.position.x = transform.position.x + velocity.x * deltaTime;
 		transform.position.y += velocity.y * deltaTime;
 		
 
-		const float frictionFactor = 0.6f;
+		const float frictionFactor = 0.55f;
 
 		velocity.x -= velocity.x * frictionFactor * deltaTime; 
 		velocity.y -= velocity.y * frictionFactor * deltaTime; 

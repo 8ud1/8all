@@ -34,6 +34,9 @@ protected:
 		return ptr;
 	}
 
+	virtual void LogicUpdate(float deltaTime);
+	virtual void PhysicsUpdate(float deltaTime);
+
 public:
 
 	virtual ~Scene() = default;
@@ -41,7 +44,7 @@ public:
 	virtual void Enter() = 0;
 	virtual void Exit() = 0;
 	virtual void HandleInputs(const SDL_Event& event) = 0;
-	virtual void Update(float deltaTime);
+	void Update(float deltaTime);
 	virtual void Render(Renderer& renderer);
 };
 

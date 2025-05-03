@@ -75,6 +75,12 @@ void InGameScreen::Exit()
 	
 }
 
+
+void InGameScreen::LogicUpdate(float deltaTime)
+{
+	Scene::LogicUpdate(deltaTime);
+}
+
 void InGameScreen::HandleInputs(const SDL_Event& event)
 {
 
@@ -105,12 +111,12 @@ void InGameScreen::HandleInputs(const SDL_Event& event)
 			SDL_FPoint shotVector =
 				SDL_FPoint
 			{
-				(ball->transform->position.x - mousePos.x) * 5.0f,
-				(ball->transform->position.y - mousePos.y) * 5.0f,
+				(ball->transform->position.x - mousePos.x) * 1.5f,
+				(ball->transform->position.y - mousePos.y)  * 1.5f,
 			};
 
 
-			ball->rigidbody->ApplyForce(shotVector);
+			ball->RigidBody()->ApplyForce(shotVector);
 
 			isCharging = false;
 
@@ -156,12 +162,6 @@ void InGameScreen::HandleInputs(const SDL_Event& event)
 	}
 }
 
-void InGameScreen::Update(float deltaTime)
-{
-	Scene::Update(deltaTime);
-	//Physics();
-}
-
 
 void InGameScreen::Render(Renderer& renderer)
 {
@@ -174,7 +174,8 @@ void InGameScreen::Render(Renderer& renderer)
 		(int)ball->transform->position.y
 	};
 
-	renderer.DrawCircle(ballPos, 50.0f, SDL_Color{255,0,0,255});
+	renderer.DrawCircle(ballPos, 50, SDL_Color{255,0,0,255});
+
 	if (isCharging)
 	{
 		for (int i = 1; i < 10; ++i)

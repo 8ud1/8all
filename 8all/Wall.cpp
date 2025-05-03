@@ -16,15 +16,9 @@ Wall::Wall(std::string name, const SDL_FPoint& startPos, const SDL_FPoint& size)
 
 	rigidbody = std::make_unique<Rigidbody>();
 	rigidbody->mass = 1.0f;
-
 	rigidbody->isStatic = true; 
 }
 
-void Wall::Update(float deltaTime)
-{
-	rigidbody->Update(*transform, deltaTime);
-	boxCollider->rect = { transform->position.x, transform->position.y, boxCollider->rect.w, boxCollider->rect.h };
-}
 
 void Wall::Render(Renderer& renderer)
 {

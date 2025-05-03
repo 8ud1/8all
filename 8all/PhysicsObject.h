@@ -9,10 +9,10 @@ class PhysicsObject : public GameObject
 
 protected:
 	std::unique_ptr<Collider> collider = nullptr;
-public:
 	std::unique_ptr<Rigidbody> rigidbody;
-	
 
+
+public:
 	PhysicsObject(const std::string& name, GameObjectType type)
 		: GameObject(name, type) {
 	}

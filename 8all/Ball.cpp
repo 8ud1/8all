@@ -8,8 +8,6 @@
 #include "Rigidbody.h"
 #include "CircleCollider.h"
 
-
-
 Ball::Ball(std::string name , const SDL_FPoint& startPos)
  :PhysicsObject(name,GameObjectType::Ball)
 {
@@ -29,7 +27,7 @@ Ball::Ball(std::string name , const SDL_FPoint& startPos)
 	rigidbody->mass = 1.0f;
 }
 
-void Ball::Update(float deltaTime)
+void Ball::PhysicsUpdate(float deltaTime)
 {
 	rigidbody->Update(*transform, deltaTime);
 	circleCollider->center = transform->position;

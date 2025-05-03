@@ -82,7 +82,7 @@ void PhysicsSystem::ResolveCollision(PhysicsObject* bodyA, PhysicsObject* bodyB,
 
 	if (velAlongNormal > 0) return;
 
-	float bounciness = 0.8f;
+	float bounciness = 0.95f;
 
 	float j = -(1 + bounciness) * velAlongNormal;
 	
