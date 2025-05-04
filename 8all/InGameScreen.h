@@ -7,14 +7,21 @@
 class Ball;
 class Game;
 class Wall;
+class PauseCanvas;
 
 class InGameScreen : public Scene
 {
 private :
+	
+	//GameObjects
 	Game& game;
 	Ball* whiteBall = nullptr;
 
 	std::vector<Ball*> balls;
+
+
+	// Canvas
+	std::unique_ptr<PauseCanvas> pauseCanvas;
 
 	int ballCount = 0;
 

@@ -8,30 +8,32 @@
 
 #include "Utilities.h"
 #include "BillardRack.h"
+#include "Ranking.h"
 
 #include "Game.h"
-
-#include "UITextButton.h"
-#include "UIButton.h"
 
 #include "Ball.h"
 #include "Wall.h"
 #include "HoleTrigger.h"
+
+#include "PauseCanvas.h"
+#include "UITextButton.h"
+#include "UIButton.h"
 
 
 // Draw the table walls
 void InGameScreen::CreateWalls()
 {
 	//Top
-	Instantiate<Wall>("topLeft", SDL_FPoint{ 265.0f,55.0f }, SDL_FPoint{ 340.0f,50.0f }, true);
-	Instantiate<Wall>("topRight", SDL_FPoint{ 655.0f,55.0f }, SDL_FPoint{ 340.0f,50.0f }, true);
+	Instantiate<Wall>("topLeft", SDL_FPoint{ 265.0f,55.0f }, SDL_FPoint{ 340.0f,50.0f }, false);
+	Instantiate<Wall>("topRight", SDL_FPoint{ 655.0f,55.0f }, SDL_FPoint{ 340.0f,50.0f }, false);
 	//Bottom
-	Instantiate<Wall>("bottomLeft", SDL_FPoint{ 265.0f,570.0f }, SDL_FPoint{ 340.0f,50.0f }, true);
-	Instantiate<Wall>("bottomRight", SDL_FPoint{ 655.0f,570.0f }, SDL_FPoint{ 340.0f,50.0f }, true);
+	Instantiate<Wall>("bottomLeft", SDL_FPoint{ 265.0f,570.0f }, SDL_FPoint{ 340.0f,50.0f }, false);
+	Instantiate<Wall>("bottomRight", SDL_FPoint{ 655.0f,570.0f }, SDL_FPoint{ 340.0f,50.0f }, false);
 	//Left
-	Instantiate<Wall>("left", SDL_FPoint{ 180.0f , 130.0f }, SDL_FPoint{ 50.0f,420.0f }, true);
+	Instantiate<Wall>("left", SDL_FPoint{ 180.0f , 130.0f }, SDL_FPoint{ 50.0f,420.0f }, false);
 	//Right
-	Instantiate<Wall>("right", SDL_FPoint{ 1020.0f , 130.0f }, SDL_FPoint{ 50.0f,420.0f }, true);
+	Instantiate<Wall>("right", SDL_FPoint{ 1020.0f , 130.0f }, SDL_FPoint{ 50.0f,420.0f }, false);
 
 }
 
@@ -99,6 +101,7 @@ void InGameScreen::OnHoleTrigger(PhysicsObject* obj)
 			//ball 8 in Hole
 
 			SDL_Log("YOU LOST -> 8 ball in hole");
+
 		}
 
 		ballCount++;
@@ -114,6 +117,30 @@ InGameScreen::InGameScreen(Game& game)
 
 void InGameScreen::Enter()
 {
+
+	/*Ranking ranking(Resources::RANKING_FILE_PATH);
+
+	if (ranking.AddEntry("David", 123))
+	{
+		SDL_Log("New Record!");
+	}
+
+	std::vector<RankingEntry> entries = ranking.GetEntries();
+
+	for (auto& entry : entries)
+	{
+		SDL_Log("Player: %s, Score: %d", entry.playerName.c_str(), entry.score);
+	}*/
+
+
+	pauseCanvas = std::make_unique<PauseCanvas>(
+		[&]() { pauseCanvas->Hide(); },
+		[&]() { SDL_Log("ShowRanking"); },
+		[&]() { game.RequestChangeScene(SceneType::MAIN_MENU); },
+		[&]() { SDL_Log("Restart"); },
+		false
+	);
+
 	CreateWalls();
 	CreateBalls();
 	CreateHoles();
@@ -128,6 +155,8 @@ void InGameScreen::Exit()
 void InGameScreen::LogicUpdate(float deltaTime)
 {
 	Scene::LogicUpdate(deltaTime);
+
+	pauseCanvas->Update(deltaTime);
 }
 
 void InGameScreen::HandleInputs(const SDL_Event& event)
@@ -193,13 +222,17 @@ void InGameScreen::HandleInputs(const SDL_Event& event)
 
 		switch (event.key.scancode)
 		{
-		case SDL_SCANCODE_W:
-			break;
-		case SDL_SCANCODE_A:
-			break;
-		case SDL_SCANCODE_S:
-			break;
-		case SDL_SCANCODE_D:
+		case SDL_SCANCODE_ESCAPE:
+		
+			if (pauseCanvas->IsActive())
+			{
+				pauseCanvas->Hide();
+			}
+			else
+			{
+				pauseCanvas->Show();
+			}
+
 			break;
 		}
 		break;
@@ -241,4 +274,6 @@ void InGameScreen::Render(Renderer& renderer)
 			renderer.DrawRect(rect, SDL_Color{ 255,0,0,255 });
 		}
 	}
+
+	pauseCanvas->Render(renderer);
 }

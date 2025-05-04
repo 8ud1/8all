@@ -2,10 +2,9 @@
 
 namespace Resources
 {
-	const char GLOBAL_SOUND_PATH[] = "../assets/sounds/";
+	const std::string RANKING_FILE_PATH = "../assets/data/ranking.txt";
 
 	// Fonts
-
 	const char FONT_BASIC_PATH[] = "../assets/fonts/OpenSans-Regular.ttf";
 
 	const char FONT_REGULAR[] = "reg";

@@ -9,6 +9,8 @@ Renderer::Renderer(SDL_Window* window)
 	renderer = SDL_CreateRenderer(window, NULL);
 
 	resourceManager = new ResourceManager(renderer);
+
+	SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
 }
 
 Renderer::~Renderer()
@@ -80,9 +82,20 @@ void Renderer::DrawTexture(const std::string& textureID, const SDL_FRect& rect)
 {
 	SDL_Texture* texture = resourceManager->GetTexture(textureID);
 
+	
 	if (texture)
 	{
 		SDL_RenderTexture(renderer, texture, nullptr, &rect);
+	}
+}
+
+void Renderer::DrawTexture(const std::string& textureID, const SDL_FRect& rect, float rotation)
+{
+	SDL_Texture* texture = resourceManager->GetTexture(textureID);
+
+	if (texture)
+	{
+		SDL_RenderTextureRotated(renderer, texture, nullptr, &rect, rotation,nullptr, SDL_FLIP_NONE);
 	}
 }
 
@@ -104,8 +117,32 @@ void Renderer::DrawTextures(const std::string& textureID, Transform* transform, 
 		srcRect.x = (frame % columns) * frameWidth;
 		srcRect.y = (frame / rows) * frameHeight;
 
+		//SDL_RenderTextureRotated(renderer, texture, &srcRect, &dstRect, 30.0f, nullptr, SDL_FLIP_NONE);
 
 		SDL_RenderTexture(renderer, texture, &srcRect, &dstRect);
+	}
+}
+
+void Renderer::DrawTextures(const std::string& textureID, Transform* transform, float rotation, int columns, int rows, int frame)
+{
+
+	SDL_Texture* texture = resourceManager->GetTexture(textureID);
+	if (texture)
+	{
+		SDL_FRect dstRect = { transform->position.x - transform->scale.x * 0.5f, transform->position.y - transform->scale.y * 0.5f, transform->scale.x, transform->scale.y };
+
+
+		int frameWidth = texture->w / columns;
+		int frameHeight = texture->h / rows;
+
+		// Calcular fila y columna (suponiendo layout horizontal)
+		SDL_FRect srcRect = { 0, 0,frameWidth ,frameWidth };
+
+		srcRect.x = (frame % columns) * frameWidth;
+		srcRect.y = (frame / rows) * frameHeight;
+
+		SDL_RenderTextureRotated(renderer, texture, &srcRect, &dstRect, rotation, nullptr, SDL_FLIP_NONE);
+
 	}
 }
 
