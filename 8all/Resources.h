@@ -18,6 +18,13 @@ namespace Resources
 
 
 	// Textures
-	const char TEXTURE_BALL_PATH[] = "../assets/images/ball.bmp";
+	const char TEXTURE_BALLS_PATH[] = "../assets/images/balls.png";
+	const char TEXTURE_BALLS[] = "balls";
+	const int BALLS_ROWS_COLUMNS = 4;
+
+	const char TEXTURE_BALL_PATH[] = "../assets/images/ball.png";
 	const char BALL[] = "ball";
+
+	const char TABLE_PATH[] = "../assets/images/table.png";
+	const char TABLE[] = "table";
 }

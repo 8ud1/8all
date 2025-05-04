@@ -86,6 +86,29 @@ void Renderer::DrawTexture(const std::string& textureID, const SDL_FRect& rect)
 	}
 }
 
+void Renderer::DrawTextures(const std::string& textureID, Transform* transform, int columns, int rows, int frame)
+{
+
+	SDL_Texture* texture = resourceManager->GetTexture(textureID);
+	if (texture)
+	{
+		SDL_FRect dstRect = { transform->position.x - transform->scale.x * 0.5f, transform->position.y - transform->scale.y * 0.5f, transform->scale.x, transform->scale.y };
+
+
+		int frameWidth = texture->w / columns; 
+		int frameHeight = texture->h / rows;
+
+		// Calcular fila y columna (suponiendo layout horizontal)
+		SDL_FRect srcRect = { 0, 0,frameWidth ,frameWidth };
+
+		srcRect.x = (frame % columns) * frameWidth;
+		srcRect.y = (frame / rows) * frameHeight;
+
+
+		SDL_RenderTexture(renderer, texture, &srcRect, &dstRect);
+	}
+}
+
 void Renderer::DrawText(const std::string& text, const std::string& fontId, SDL_Color color, float x, float y)
 {
 	TTF_Font* font = resourceManager->GetFont(fontId);

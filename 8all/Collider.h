@@ -10,7 +10,7 @@ class CircleCollider;
 class Collider
 {
 public :
-
+	bool isTrigger = false;
 	virtual ~Collider() = default;
 
 	virtual bool CheckCollision(const Collider& other, CollisionInfo& info) const = 0;

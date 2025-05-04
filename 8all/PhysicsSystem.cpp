@@ -25,16 +25,22 @@ void PhysicsSystem::Update(float deltaTime)
 {
 	for (size_t i = 0; i < bodies.size(); ++i)
 	{
-
 		PhysicsObject* a = bodies[i];
 		for (size_t j = i + 1; j < bodies.size(); ++j)
 		{
 			PhysicsObject* b = bodies[j];
-
 			CollisionInfo info;
 			if (a->GetCollider()->CheckCollision(*b->GetCollider(), info))
 			{
-				ResolveCollision(a, b, info);
+				if (a->GetCollider()->isTrigger || b->GetCollider()->isTrigger)
+				{
+					a->OnTrigger(b);
+					b->OnTrigger(a);
+				}
+				else
+				{
+					ResolveCollision(a, b, info);
+				}
 			}
 		}
 	}
@@ -42,19 +48,24 @@ void PhysicsSystem::Update(float deltaTime)
 
 void PhysicsSystem::ResolveCollision(PhysicsObject* bodyA, PhysicsObject* bodyB, CollisionInfo& info)
 {
+
 	Rigidbody* rbA = bodyA->RigidBody();
 	Rigidbody* rbB = bodyB->RigidBody();
 
-	float invMassA = rbA->isStatic ? 0.0f : 1.0f / rbA->mass;
-	float invMassB = rbB->isStatic ? 0.0f : 1.0f / rbB->mass;
 
+	float invMassA = rbA->GetIsStatic() ? 0.0f : 1.0f / rbA->GetMass();
+	float invMassB = rbB->GetIsStatic() ? 0.0f : 1.0f / rbB->GetMass();
+
+
+	float totalInvMass = invMassA + invMassB;
 
 	// Skip if both rb are statics
-	if (invMassA + invMassB == 0.0f) return;
+	if (totalInvMass == 0.0f) return;
 
-	// Penetration correction (position separation)
-	const float percent = 0.8f;  // 80% correction
-	const float slop = 0.01f;    // tolerance
+	// Penetration correction
+	const float percent = 0.8f;  
+	const float slop = 0.01f;    
+
 	float correctionMagnitude = std::max(info.penetration - slop, 0.0f) / (invMassA + invMassB) * percent;
 
 	SDL_FPoint correction = {
@@ -62,27 +73,31 @@ void PhysicsSystem::ResolveCollision(PhysicsObject* bodyA, PhysicsObject* bodyB,
 		correctionMagnitude * info.normal.y
 	};
 
-	if (!rbA->isStatic) {
-		bodyA->transform->position.x -= correction.x * invMassA;
-		bodyA->transform->position.y -= correction.y * invMassA;
+	if (!rbA->GetIsStatic()) {
+
+
+		bodyA->transform->position.x -= correction.x * (invMassA / totalInvMass);
+		bodyA->transform->position.y -= correction.y * (invMassA / totalInvMass);
 	}
 
-	if (!rbB->isStatic) {
-		bodyB->transform->position.x += correction.x * invMassB;
-		bodyB->transform->position.y += correction.y * invMassB;
+	if (!rbB->GetIsStatic()) 
+	{
+
+		bodyB->transform->position.x += correction.x * (invMassB/ totalInvMass);
+		bodyB->transform->position.y += correction.y * (invMassB / totalInvMass);
 	}
 
 	SDL_FPoint relativeVelocity
 	{
-		rbB->velocity.x - rbA->velocity.x,
-		rbB->velocity.y - rbA->velocity.y
+		rbB->GetVelocity().x - rbA->GetVelocity().x,
+		rbB->GetVelocity().y - rbA->GetVelocity().y
 	};
 
 	float velAlongNormal = relativeVelocity.x * info.normal.x + relativeVelocity.y * info.normal.y;
 
 	if (velAlongNormal > 0) return;
 
-	float bounciness = 0.95f;
+	float bounciness = 0.90f;
 
 	float j = -(1 + bounciness) * velAlongNormal;
 	
@@ -95,15 +110,18 @@ void PhysicsSystem::ResolveCollision(PhysicsObject* bodyA, PhysicsObject* bodyB,
 		j * info.normal.y
 	};
 
-	if (!rbA->isStatic) {
-		rbA->velocity.x -= impulse.x * invMassA;
-		rbA->velocity.y -= impulse.y * invMassA;
-	}
+	if (!rbA->GetIsStatic())
+		rbA->SetVelocity(
+			{
+				rbA->GetVelocity().x - impulse.x * invMassA,
+				rbA->GetVelocity().y - impulse.y * invMassA
+			});
+		
 
-	if (!rbB->isStatic) {
-		rbB->velocity.x += impulse.x * invMassB;
-		rbB->velocity.y += impulse.y * invMassB;
-	}
-
-
+	if (!rbB->GetIsStatic())
+		rbB->SetVelocity(
+			{
+				rbB->GetVelocity().x + impulse.x * invMassB,
+				rbB->GetVelocity().y + impulse.y * invMassB
+			});
 }

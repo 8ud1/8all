@@ -43,45 +43,23 @@ bool CircleCollider::CheckCollisionWithBox(const BoxCollider& other, CollisionIn
     float dx = center.x - closestX;
     float dy = center.y - closestY;
 
-	float distSQ = dx * dx + dy * dy;
+    float distSq = dx * dx + dy * dy;
+    float radiusSq = radius * radius;
 
-	if (distSQ < (radius * radius))
-	{
-		float dist = sqrtf(distSQ);
-		info.penetration = radius - dist;
-		
-
-        if (closestX == rect.x)
-        {
-			info.normal = { 1.0f, 0.0f };
-        }
-        else if (closestX == rect.x + rect.w)
-        {
-			info.normal = { -1.0f, 0.0f };
-		}
-		else if (closestY == rect.y)
-		{
-			info.normal = { 0.0f, 1.0f };
-        }
-        else if (closestY == rect.y + rect.h)
-        {
-			info.normal = { 0.0f, -1.0f };
-        }
-        else
-        {
-            info.normal = (dist != 0.0f) ? SDL_FPoint{ dx / dist, dy / dist } : SDL_FPoint{ 1.0f, 0.0f };
-
-        }
-        
+    if (distSq < radiusSq) {
+        float dist = sqrtf(distSq);
+        info.penetration = radius - dist;
+        info.normal = (dist != 0.0f)
+            ? SDL_FPoint{ dx / dist, dy / dist }
+        : SDL_FPoint{ 1.0f, 0.0f };
         return true;
-	}
+    }
 
     return false;
 }
 
 void CircleCollider::DrawDebug(Renderer& renderer) const
 {
-
     SDL_Point intCenter = { center.x, center.y };
     renderer.DrawCircle(intCenter, radius, SDL_Color{0,255,0,255});
 }

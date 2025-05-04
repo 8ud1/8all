@@ -3,8 +3,9 @@
 
 class CircleCollider : public Collider
 {
-public:
+protected:
 
+public:
 	SDL_FPoint center;
 	float radius;
 

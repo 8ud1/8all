@@ -94,6 +94,8 @@ bool Game::Start(const char* title)
 	renderer->LoadFont(Resources::FONT_TITLE,Resources::FONT_BASIC_PATH, Resources::FONT_TITLE_SIZE);
 	
 	renderer->LoadTexture(Resources::BALL,Resources::TEXTURE_BALL_PATH);
+	renderer->LoadTexture(Resources::TABLE, Resources::TABLE_PATH);
+	renderer->LoadTexture(Resources::TEXTURE_BALLS, Resources::TEXTURE_BALLS_PATH);
 
 	isRunning = true;
 

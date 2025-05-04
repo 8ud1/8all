@@ -1,4 +1,5 @@
 #include "ResourceManager.h"
+#include <SDL3/SDL_image.h>
 
 ResourceManager::ResourceManager(SDL_Renderer* renderer) : renderer(renderer) {}
 
@@ -10,20 +11,16 @@ ResourceManager::~ResourceManager()
 
 bool ResourceManager::LoadTexture(const std::string& id, const std::string& path)
 {
-	SDL_Surface* surface = SDL_LoadBMP(path.c_str());
+	SDL_Surface* surface = IMG_Load(path.c_str());
 
-	if (!surface)
-		return false;
+	if (!surface) return false;
 
 	SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, surface);
 
 	SDL_DestroySurface(surface);
 
-	if (!texture)
-		return false;
-
+	if (!texture) return false;
 	textures[id] = texture;
-
 	return true;
 }
 

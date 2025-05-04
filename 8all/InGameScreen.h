@@ -12,11 +12,21 @@ class InGameScreen : public Scene
 {
 private :
 	Game& game;
-	Ball* ball = nullptr;
+	Ball* whiteBall = nullptr;
+
+	std::vector<Ball*> balls;
+
+	int ballCount = 0;
 
 	bool isCharging = false;
-
 	SDL_FPoint chargingVector = SDL_FPoint{ 0.0f,0.0f };
+
+	void CreateBalls();
+
+	void CreateHoles();
+	void CreateWalls();
+
+	void OnHoleTrigger(PhysicsObject* obj);
 
 public:
 	InGameScreen(Game& game);

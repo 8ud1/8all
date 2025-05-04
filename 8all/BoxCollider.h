@@ -5,6 +5,7 @@
 
 class BoxCollider : public Collider
 {
+protected:
 
 public:
 

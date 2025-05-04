@@ -1,6 +1,5 @@
 #include "UIButton.h"
 #include "Transform.h"
-#include "RenderComponent.h"
 #include "Renderer.h"
 #include "Resources.h"
 #include "Utilities.h"
@@ -53,5 +52,4 @@ void UIButton::Render(Renderer& renderer)
 	renderer.DrawText("Click Me", Resources::FONT_REGULAR, { 255,255,255,255 }, 
 		transform->position.x + transform->scale.x *0.5f,
 		transform->position.y + transform->scale.y * 0.5f);
-	//GameObject::Render(renderer);
 }

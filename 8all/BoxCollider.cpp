@@ -1,4 +1,4 @@
-#include "BoxCollider.h"
+﻿#include "BoxCollider.h"
 
 #include "CircleCollider.h"
 
@@ -14,31 +14,37 @@ bool BoxCollider::CheckCollisionWithCircle(const CircleCollider& other, Collisio
 
 bool BoxCollider::CheckCollisionWithBox(const BoxCollider& other, CollisionInfo& info) const
 {
+    float centerAx = rect.x + rect.w * 0.5f;
+    float centerAy = rect.y + rect.h * 0.5f;
 
-	//Todo - something wrong
-	bool overlapedX = (rect.x < other.rect.x + other.rect.w) && (rect.x + rect.w > other.rect.x);
-	bool overlapedY = (rect.y < other.rect.y + other.rect.h) && (rect.y + rect.h > other.rect.y);
+    float centerBx = other.rect.x + other.rect.w * 0.5f;
+    float centerBy = other.rect.y + other.rect.h * 0.5f;
 
+    float dx = centerBx - centerAx;
+    float dy = centerBy - centerAy;
 
-	if (overlapedX && overlapedY)
-	{
-		float dx = (rect.x + rect.w / 2) - (other.rect.x + other.rect.w / 2);
-		float dy = (rect.y + rect.h / 2) - (other.rect.y + other.rect.h / 2);
-		if (abs(dx) > abs(dy))
-		{
-			info.normal = { dx > 0 ? 1.0f : -1.0f, 0.0f };
-			info.penetration = abs(dx);
-		}
-		else
-		{
-			info.normal = { 0.0f, dy > 0 ? 1.0f : -1.0f };
-			info.penetration = abs(dy);
-		}
+    float halfWidthA = rect.w * 0.5f;
+    float halfWidthB = other.rect.w * 0.5f;
 
-		return true;
-	}
+    float halfHeightA = rect.h * 0.5f;
+    float halfHeightB = other.rect.h * 0.5f;
 
-	return false;
+    float overlapX = halfWidthA + halfWidthB - std::abs(dx);
+    float overlapY = halfHeightA + halfHeightB - std::abs(dy);
+
+    if (overlapX > 0 && overlapY > 0) {
+        if (overlapX < overlapY) {
+            info.normal = { dx < 0 ? -1.0f : 1.0f, 0.0f };
+            info.penetration = overlapX;
+        }
+        else {
+            info.normal = { 0.0f, dy < 0 ? -1.0f : 1.0f };
+            info.penetration = overlapY;
+        }
+        return true;
+    }
+
+    return false;
 }
 
 void BoxCollider::DrawDebug(Renderer& renderer) const

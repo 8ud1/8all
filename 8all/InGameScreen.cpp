@@ -6,13 +6,106 @@
 #include <cstdlib>
 #include <string>
 
-#include "Ball.h"
-#include "UIButton.h"
-#include "UITextButton.h"
-#include "Game.h"
 #include "Utilities.h"
-#include "Rigidbody.h"
+#include "BillardRack.h"
+
+#include "Game.h"
+
+#include "UITextButton.h"
+#include "UIButton.h"
+
+#include "Ball.h"
 #include "Wall.h"
+#include "HoleTrigger.h"
+
+
+// Draw the table walls
+void InGameScreen::CreateWalls()
+{
+	//Top
+	Instantiate<Wall>("topLeft", SDL_FPoint{ 265.0f,55.0f }, SDL_FPoint{ 340.0f,50.0f }, true);
+	Instantiate<Wall>("topRight", SDL_FPoint{ 655.0f,55.0f }, SDL_FPoint{ 340.0f,50.0f }, true);
+	//Bottom
+	Instantiate<Wall>("bottomLeft", SDL_FPoint{ 265.0f,570.0f }, SDL_FPoint{ 340.0f,50.0f }, true);
+	Instantiate<Wall>("bottomRight", SDL_FPoint{ 655.0f,570.0f }, SDL_FPoint{ 340.0f,50.0f }, true);
+	//Left
+	Instantiate<Wall>("left", SDL_FPoint{ 180.0f , 130.0f }, SDL_FPoint{ 50.0f,420.0f }, true);
+	//Right
+	Instantiate<Wall>("right", SDL_FPoint{ 1020.0f , 130.0f }, SDL_FPoint{ 50.0f,420.0f }, true);
+
+}
+
+// Draw the table holes
+void InGameScreen::CreateHoles()
+{
+	float holeSize = 10.0f;
+
+	/*UpperLeft*/Instantiate<HoleTrigger>("trigger", SDL_FPoint{ 234.0f,101.0f }, holeSize, [this](PhysicsObject* obj) {this->OnHoleTrigger(obj); });
+	/*LowerLeft*/Instantiate<HoleTrigger>("trigger", SDL_FPoint{ 234.0f,573.0f }, holeSize, [this](PhysicsObject* obj) {this->OnHoleTrigger(obj); });
+	/*LowerCenter*/Instantiate<HoleTrigger>("trigger", SDL_FPoint{ 628.0f,590.0f }, holeSize, [this](PhysicsObject* obj) {this->OnHoleTrigger(obj); });
+	/*UpperCenter*/Instantiate<HoleTrigger>("trigger", SDL_FPoint{ 628.0f,90.0f }, holeSize, [this](PhysicsObject* obj) {this->OnHoleTrigger(obj); });
+	/*LowerRight*/Instantiate<HoleTrigger>("trigger", SDL_FPoint{ 1022.0f,573.0f }, holeSize, [this](PhysicsObject* obj) {this->OnHoleTrigger(obj); });
+	/*UpperRight*/Instantiate<HoleTrigger>("trigger", SDL_FPoint{ 1022.0f,101.0f }, holeSize, [this](PhysicsObject* obj) {this->OnHoleTrigger(obj); });
+
+}
+
+void InGameScreen::CreateBalls()
+{
+	whiteBall = Instantiate<Ball>(
+		"white ball",
+		15,
+		SDL_FPoint{ 350.0f,Utilities::SCREEN_HEIGHT * 0.5f }
+	);
+
+
+	BillardRack rack;
+
+	for (auto& placement : rack.GenerateRack())
+	{
+		float x = Utilities::SCREEN_WIDTH * 0.6f + placement.row * 25.0f;
+
+		float y = Utilities::SCREEN_HEIGHT * 0.5f - (placement.row * 0.5f * 25.0f) + 25.0f * placement.column + 12.5f;
+
+		SDL_Log("Creating ball %d ", placement.number);
+		balls.push_back(Instantiate<Ball>(
+			"ball_" + std::to_string(placement.number),
+			placement.number,
+			SDL_FPoint{ x, y }
+		));
+	}
+}
+
+void InGameScreen::OnHoleTrigger(PhysicsObject* obj)
+{
+
+	//white ball in hole 
+	if (obj == whiteBall)
+	{
+		whiteBall->transform->position = SDL_FPoint{ 350.0f,Utilities::SCREEN_HEIGHT * 0.5f };
+		whiteBall->RigidBody()->SetVelocity(SDL_FPoint{0.0f,0.0f});
+		return;
+	}
+
+
+	// ball in hole
+	auto it = std::find(balls.begin(), balls.end(), obj);
+	if (it != balls.end()) {
+		
+
+		Ball* ball = *it;
+
+		if (ball->GetId() == 7)
+		{
+			//ball 8 in Hole
+
+			SDL_Log("YOU LOST -> 8 ball in hole");
+		}
+
+		ballCount++;
+		obj->RigidBody()->SetStatic(true);
+		obj->transform->position = SDL_FPoint{ 50.0f,50.0f + ballCount * 40.0f };
+	}
+}
 
 InGameScreen::InGameScreen(Game& game)
 	: game(game)
@@ -21,53 +114,9 @@ InGameScreen::InGameScreen(Game& game)
 
 void InGameScreen::Enter()
 {
-
-	for (int i = 0; i <= 5; i++)
-	{
-		float x = Utilities::SCREEN_WIDTH * 0.65f + i * 55 ;
-
-		for (int j = 0; j < i; j++)
-		{
-			float y = Utilities::SCREEN_HEIGHT * 0.5f - (i * 0.5f * 55) + 55 * j + 25;
-
-			Instantiate<Ball>(
-				"ball_" + std::to_string(i),
-				SDL_FPoint{ x, y }
-			);
-		}
-	}
-
-	ball = Instantiate<Ball>(
-		"ball 2",
-		SDL_FPoint{ 200.0f,Utilities::SCREEN_HEIGHT * 0.5f }
-	);
-
-	// environment
-
-	 Instantiate<Wall>(
-		"leftWall",
-		SDL_FPoint{ 0.0f, 0.0f },
-		SDL_FPoint{ 50.0f, Utilities::SCREEN_HEIGHT }
-	);
-
-	 Instantiate<Wall>(
-		 "rightWall",
-		 SDL_FPoint{ Utilities::SCREEN_WIDTH - 50.0f, 0.0f },
-		 SDL_FPoint{ 50.0f, Utilities::SCREEN_HEIGHT }
-	 );
-
-	 Instantiate<Wall>(
-		 "topWall",
-		 SDL_FPoint{ 50.0f,0.0f },
-		 SDL_FPoint{ Utilities::SCREEN_WIDTH -100.0f,50.0f }
-	 );
-
-	 Instantiate<Wall>(
-		 "bottomWall",
-		 SDL_FPoint{ 50.0f, Utilities::SCREEN_HEIGHT - 50.0f },
-		 SDL_FPoint{ Utilities::SCREEN_WIDTH - 100.0f,50.0f }
-	 );
-
+	CreateWalls();
+	CreateBalls();
+	CreateHoles();
 }
 
 void InGameScreen::Exit()
@@ -94,8 +143,8 @@ void InGameScreen::HandleInputs(const SDL_Event& event)
 		chargingVector =
 			SDL_FPoint
 		{
-			(ball->transform->position.x - mousePos.x),
-			(ball->transform->position.y - mousePos.y),
+			(whiteBall->transform->position.x - mousePos.x),
+			(whiteBall->transform->position.y - mousePos.y),
 		};
 	}
 
@@ -111,12 +160,12 @@ void InGameScreen::HandleInputs(const SDL_Event& event)
 			SDL_FPoint shotVector =
 				SDL_FPoint
 			{
-				(ball->transform->position.x - mousePos.x) * 1.5f,
-				(ball->transform->position.y - mousePos.y)  * 1.5f,
+				(whiteBall->transform->position.x - mousePos.x) ,
+				(whiteBall->transform->position.y - mousePos.y) ,
 			};
 
 
-			ball->RigidBody()->ApplyForce(shotVector);
+			whiteBall->RigidBody()->ApplyForce(shotVector);
 
 			isCharging = false;
 
@@ -129,10 +178,10 @@ void InGameScreen::HandleInputs(const SDL_Event& event)
 		{
 			SDL_FRect ballRect =
 			{
-				ball->transform->position.x - ball->transform->scale.x * 0.5f,
-				ball->transform->position.y - ball->transform->scale.y * 0.5f,
-				ball->transform->scale.x,
-				ball->transform->scale.y
+				whiteBall->transform->position.x - whiteBall->transform->scale.x * 0.5f,
+				whiteBall->transform->position.y - whiteBall->transform->scale.y * 0.5f,
+				whiteBall->transform->scale.x,
+				whiteBall->transform->scale.y
 			};
 
 			isCharging = SDL_PointInRectFloat(&mousePos, &ballRect);
@@ -165,13 +214,15 @@ void InGameScreen::HandleInputs(const SDL_Event& event)
 
 void InGameScreen::Render(Renderer& renderer)
 {
+	renderer.DrawTexture(Resources::TABLE, SDL_FRect{ 0.0f,0.0f, Utilities::SCREEN_WIDTH, Utilities::SCREEN_HEIGHT });
 	Scene::Render(renderer);
 
 
+	
 	SDL_Point ballPos = SDL_Point
 	{
-		(int)ball->transform->position.x,
-		(int)ball->transform->position.y
+		(int)whiteBall->transform->position.x,
+		(int)whiteBall->transform->position.y
 	};
 
 	renderer.DrawCircle(ballPos, 50, SDL_Color{255,0,0,255});
@@ -182,8 +233,8 @@ void InGameScreen::Render(Renderer& renderer)
 		{
 
 			SDL_FRect rect = SDL_FRect{
-			(ball->transform->position.x + chargingVector.x * ( 0.1f * i )),
-			(ball->transform->position.y + chargingVector.y * ( 0.1f * i )),
+			(whiteBall->transform->position.x + chargingVector.x * ( 0.1f * i )),
+			(whiteBall->transform->position.y + chargingVector.y * ( 0.1f * i )),
 			5.0f,5.0f
 			};
 
