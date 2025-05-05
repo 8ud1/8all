@@ -21,6 +21,27 @@ void PhysicsSystem::ClearBodies()
 	bodies.clear();
 }
 
+bool PhysicsSystem::AreAllObjectsStopped(float threshold) const
+{
+	
+	for (const auto& body : bodies)
+	{
+		Rigidbody* rb;
+		rb = body->RigidBody();
+
+		if (rb->GetIsStatic()) continue;
+
+		float speed = rb->GetSpeed();
+
+		if (speed > threshold )
+		{
+			return false;
+		}
+
+	}
+	return true;
+}
+
 void PhysicsSystem::Update(float deltaTime)
 {
 	for (size_t i = 0; i < bodies.size(); ++i)
@@ -73,6 +94,7 @@ void PhysicsSystem::ResolveCollision(PhysicsObject* bodyA, PhysicsObject* bodyB,
 		correctionMagnitude * info.normal.y
 	};
 
+	// Apply the correction 
 	if (!rbA->GetIsStatic()) {
 
 
@@ -87,6 +109,8 @@ void PhysicsSystem::ResolveCollision(PhysicsObject* bodyA, PhysicsObject* bodyB,
 		bodyB->transform->position.y += correction.y * (invMassB / totalInvMass);
 	}
 
+	
+	// Calculate the relative velocity
 	SDL_FPoint relativeVelocity
 	{
 		rbB->GetVelocity().x - rbA->GetVelocity().x,
@@ -110,6 +134,7 @@ void PhysicsSystem::ResolveCollision(PhysicsObject* bodyA, PhysicsObject* bodyB,
 		j * info.normal.y
 	};
 
+	// Apply the impulse (linear)
 	if (!rbA->GetIsStatic())
 		rbA->SetVelocity(
 			{
@@ -124,4 +149,10 @@ void PhysicsSystem::ResolveCollision(PhysicsObject* bodyA, PhysicsObject* bodyB,
 				rbB->GetVelocity().x + impulse.x * invMassB,
 				rbB->GetVelocity().y + impulse.y * invMassB
 			});
+
+	//ADd impulse by torque
+
+	rbA->ApplyTorqueFromImpulse(info.contactPoint, impulse);
+	rbB->ApplyTorqueFromImpulse(info.contactPoint, impulse);
+
 }

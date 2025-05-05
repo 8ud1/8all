@@ -11,11 +11,13 @@ HoleTrigger::HoleTrigger(const std::string& name, const SDL_FPoint& pos, float r
 
 	collider = std::make_unique<CircleCollider>(pos, radius);
 	collider->isTrigger = true;
+
+	rigidbody = std::make_unique<Rigidbody>(transform.get(), true);
 }
 
 void HoleTrigger::OnTrigger(PhysicsObject* other)
 {
-	other->RigidBody()->AttractToPoint(transform->position, 0.5f);
+	other->RigidBody()->AttractToPoint(transform->position,0.5f);
 
 
 	SDL_FPoint a = transform->position;

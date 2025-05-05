@@ -34,7 +34,7 @@ void Game::Render()
 {
 	renderer->Clear();
 	if (currentScene) currentScene->Render(*renderer);
-	ShowStats();
+	//ShowStats();
 	renderer->Present();
 }
 

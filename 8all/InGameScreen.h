@@ -4,10 +4,16 @@
 #include "Scene.h"
 #include "Utilities.h"
 
+#include "ShotController.h"
+#include "PauseCanvas.h"
+#include "GameRules.h"
+#include "GameUIManager.h"
+
 class Ball;
 class Game;
 class Wall;
-class PauseCanvas;
+class UIBallSpin;
+
 
 class InGameScreen : public Scene
 {
@@ -16,27 +22,18 @@ private :
 	//GameObjects
 	Game& game;
 	Ball* whiteBall = nullptr;
-
 	std::vector<Ball*> balls;
 
-
 	// Canvas
-	std::unique_ptr<PauseCanvas> pauseCanvas;
+	std::unique_ptr<GameRules> gameRules;
+	std::unique_ptr<GameUIManager> uiManager;
 
-	int ballCount = 0;
-
-	bool isCharging = false;
-	SDL_FPoint chargingVector = SDL_FPoint{ 0.0f,0.0f };
-
-	void CreateBalls();
-
-	void CreateHoles();
-	void CreateWalls();
-
-	void OnHoleTrigger(PhysicsObject* obj);
+	void SetupTable();
+	void SetupBalls();
+	void SetupUI();
 
 public:
-	InGameScreen(Game& game);
+	InGameScreen(Game& game) : game(game) {};
 	void Enter() override;
 	void Exit() override;
 

@@ -19,7 +19,6 @@ bool CircleCollider::CheckCollisionWithCircle(const CircleCollider& other, Colli
     float distSq = dx * dx + dy * dy;
     float radiusSum = radius + other.radius;
 
-
 	if (distSq < (radiusSum * radiusSum))
 	{
 
@@ -27,6 +26,11 @@ bool CircleCollider::CheckCollisionWithCircle(const CircleCollider& other, Colli
 		info.penetration = radiusSum - dist;
 		info.normal = dist != (0.0f) ? SDL_FPoint{ dx / dist, dy / dist } : SDL_FPoint{ 1.0f, 0.0f };
 		
+        info.contactPoint = SDL_FPoint{
+        center.x - info.normal.x * radius,
+        center.y - info.normal.y * radius
+        };
+
         return true;
 	}
     return false;
@@ -37,11 +41,14 @@ bool CircleCollider::CheckCollisionWithBox(const BoxCollider& other, CollisionIn
 
     const SDL_FRect& rect = other.rect;
 
-    float closestX = std::max(rect.x, std::min(center.x, rect.x + rect.w));
-    float closestY = std::max(rect.y, std::min(center.y, rect.y + rect.h));
+    info.contactPoint = SDL_FPoint
+    {
+        std::max(rect.x, std::min(center.x, rect.x + rect.w)),
+        std::max(rect.y, std::min(center.y, rect.y + rect.h))
+    };
 
-    float dx = center.x - closestX;
-    float dy = center.y - closestY;
+    float dx = center.x - info.contactPoint.x;
+    float dy = center.y - info.contactPoint.y;
 
     float distSq = dx * dx + dy * dy;
     float radiusSq = radius * radius;
@@ -52,6 +59,8 @@ bool CircleCollider::CheckCollisionWithBox(const BoxCollider& other, CollisionIn
         info.normal = (dist != 0.0f)
             ? SDL_FPoint{ dx / dist, dy / dist }
         : SDL_FPoint{ 1.0f, 0.0f };
+
+        
         return true;
     }
 

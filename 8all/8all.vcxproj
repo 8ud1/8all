@@ -140,6 +140,8 @@
     <ClCompile Include="BoxCollider.cpp" />
     <ClCompile Include="CircleCollider.cpp" />
     <ClCompile Include="Game.cpp" />
+    <ClCompile Include="GameRules.cpp" />
+    <ClCompile Include="GameUIManager.cpp" />
     <ClCompile Include="InGameScreen.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MainMenu.cpp" />
@@ -150,8 +152,10 @@
     <ClCompile Include="ResourceManager.cpp" />
     <ClCompile Include="Rigidbody.cpp" />
     <ClCompile Include="Scene.cpp" />
+    <ClCompile Include="ShotController.cpp" />
     <ClCompile Include="Time.cpp" />
     <ClCompile Include="HoleTrigger.cpp" />
+    <ClCompile Include="UIBallSpin.cpp" />
     <ClCompile Include="UIButton.cpp" />
     <ClCompile Include="UITextButton.cpp" />
     <ClCompile Include="Wall.cpp" />
@@ -165,6 +169,8 @@
     <ClInclude Include="Collider.h" />
     <ClInclude Include="CollisionInfo.h" />
     <ClInclude Include="GameObject.h" />
+    <ClInclude Include="GameRules.h" />
+    <ClInclude Include="GameUIManager.h" />
     <ClInclude Include="InGameScreen.h" />
     <ClInclude Include="MainMenu.h" />
     <ClInclude Include="PauseCanvas.h" />
@@ -173,8 +179,10 @@
     <ClInclude Include="Ranking.h" />
     <ClInclude Include="Rigidbody.h" />
     <ClInclude Include="Scene.h" />
+    <ClInclude Include="ShotController.h" />
     <ClInclude Include="Transform.h" />
     <ClInclude Include="HoleTrigger.h" />
+    <ClInclude Include="UIBallSpin.h" />
     <ClInclude Include="UIButton.h" />
     <ClInclude Include="UITextButton.h" />
     <ClInclude Include="Utilities.h" />

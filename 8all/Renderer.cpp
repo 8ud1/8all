@@ -24,7 +24,7 @@ Renderer::~Renderer()
 
 void Renderer::Clear()
 {
-	SDL_SetRenderDrawColor(renderer, 0,0,0,255);
+	SDL_SetRenderDrawColor(renderer, 20,112,69,255);
 	SDL_RenderClear(renderer);
 }
 
@@ -105,7 +105,7 @@ void Renderer::DrawTextures(const std::string& textureID, Transform* transform, 
 	SDL_Texture* texture = resourceManager->GetTexture(textureID);
 	if (texture)
 	{
-		SDL_FRect dstRect = { transform->position.x - transform->scale.x * 0.5f, transform->position.y - transform->scale.y * 0.5f, transform->scale.x, transform->scale.y };
+		SDL_FRect dstRect = { transform->position.x - (transform->scale.x * 0.5f), transform->position.y - (transform->scale.y * 0.5f), transform->scale.x, transform->scale.y};
 
 
 		int frameWidth = texture->w / columns; 
@@ -141,10 +141,30 @@ void Renderer::DrawTextures(const std::string& textureID, Transform* transform, 
 		srcRect.x = (frame % columns) * frameWidth;
 		srcRect.y = (frame / rows) * frameHeight;
 
+		dstRect.x += 5.0;
+		dstRect.y += 5.0;
+
+		SDL_SetTextureColorMod(texture, 0, 0, 0);
+		SDL_SetTextureAlphaMod(texture, 70);
+
 		SDL_RenderTextureRotated(renderer, texture, &srcRect, &dstRect, rotation, nullptr, SDL_FLIP_NONE);
 
+
+		dstRect.x -= 5.0;
+		dstRect.y -= 5.0;
+
+		SDL_SetTextureColorMod(texture, 255,255,255);
+		SDL_SetTextureAlphaMod(texture, 255);
+
+		SDL_RenderTextureRotated(renderer, texture, &srcRect, &dstRect, rotation, nullptr, SDL_FLIP_NONE);
+
+		
+		
+		
 	}
 }
+
+
 
 void Renderer::DrawText(const std::string& text, const std::string& fontId, SDL_Color color, float x, float y)
 {

@@ -22,7 +22,7 @@ MainMenu::MainMenu(Game& game)
 void MainMenu::Enter()
 {
 	Instantiate<UITextButton>(
-		SDL_FPoint{ Utilities::SCREEN_WIDTH * 0.5f - 100.0f, Utilities::SCREEN_HEIGHT * 0.5f},
+		SDL_FPoint{ Utilities::SCREEN_WIDTH * 0.2f , Utilities::SCREEN_HEIGHT * 0.5f},
 		SDL_FPoint{ 200.0f,50.0f },
 		[this]() {game.RequestChangeScene(SceneType::GAME); },
 		("Start Game"),
@@ -31,7 +31,7 @@ void MainMenu::Enter()
 	);
 
 	Instantiate<UITextButton>(
-		SDL_FPoint{ Utilities::SCREEN_WIDTH * 0.5f - 100.0f, Utilities::SCREEN_HEIGHT * 0.5f + 75.0f },
+		SDL_FPoint{ Utilities::SCREEN_WIDTH * 0.2f , Utilities::SCREEN_HEIGHT * 0.5f + 75.0f },
 		SDL_FPoint{ 200.0f,50.0f },
 		[&]() {SDL_Log("Ranking"); },
 		("Ranking"),
@@ -40,7 +40,7 @@ void MainMenu::Enter()
 	);
 
 	Instantiate<UITextButton>(
-		SDL_FPoint{ Utilities::SCREEN_WIDTH * 0.5f - 100.0f, Utilities::SCREEN_HEIGHT * 0.5f + 75.0f * 2.0f },
+		SDL_FPoint{ Utilities::SCREEN_WIDTH * 0.2f , Utilities::SCREEN_HEIGHT * 0.5f + 75.0f * 2.0f },
 		SDL_FPoint{ 200.0f,50.0f },
 		[&]() {SDL_Quit(); },
 		("Quit"),
@@ -108,7 +108,7 @@ void MainMenu::Render(Renderer& renderer)
 		"8all",
 		Resources::FONT_TITLE,
 		SDL_Color{ 255,255,255,255 },
-		Utilities::SCREEN_WIDTH * 0.5f,
+		Utilities::SCREEN_WIDTH * 0.27f,
 		Utilities::SCREEN_HEIGHT * 0.25f
 		);
 

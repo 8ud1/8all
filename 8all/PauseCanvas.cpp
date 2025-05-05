@@ -5,11 +5,9 @@
 #include "Utilities.h"
 
 PauseCanvas::PauseCanvas(
-	std::function<void()> resumeAction, std::function<void()> rankingAction,
-	std::function<void()> exitAction, std::function<void()> restartAction,
+	std::function<void()> resumeAction,	std::function<void()> exitAction, std::function<void()> restartAction,
 	bool startActive)
-	: OnResume(resumeAction), ShowRanking(rankingAction),
-	OnExit(exitAction), OnRestart(restartAction), Canvas(startActive)
+	: OnResume(resumeAction),OnExit(exitAction), OnRestart(restartAction), Canvas(startActive)
 {
 
 	InitCanvas();

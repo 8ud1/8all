@@ -25,11 +25,9 @@ Ball::Ball(std::string name , int id,const SDL_FPoint& startPos)
 
 void Ball::PhysicsUpdate(float deltaTime)
 {	
-	rigidbody->Update(*transform, deltaTime);
+	rigidbody->Update(deltaTime);
 	circleCollider->center = transform->position;
 }
-
-float rotation = 0.0f;
 
 void Ball::Render(Renderer& renderer)
 {
@@ -40,9 +38,8 @@ void Ball::Render(Renderer& renderer)
 		transform->position.y - 15.0f,
 	};
 
+	renderer.DrawTextures(Resources::TEXTURE_BALLS, transform.get(), transform->rotation, Resources::BALLS_ROWS_COLUMNS,Resources::BALLS_ROWS_COLUMNS, id);
 
-	rotation += 0.5f;
-	renderer.DrawTextures(Resources::TEXTURE_BALLS, transform.get(), rotation, Resources::BALLS_ROWS_COLUMNS,Resources::BALLS_ROWS_COLUMNS, id);
 
 	//circleCollider->DrawDebug(renderer);
 }

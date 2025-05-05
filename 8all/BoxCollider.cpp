@@ -36,10 +36,23 @@ bool BoxCollider::CheckCollisionWithBox(const BoxCollider& other, CollisionInfo&
         if (overlapX < overlapY) {
             info.normal = { dx < 0 ? -1.0f : 1.0f, 0.0f };
             info.penetration = overlapX;
+
+            info.contactPoint = SDL_FPoint
+            {
+                centerAx + (halfWidthA * info.normal.x),
+                centerBy
+            };
         }
         else {
             info.normal = { 0.0f, dy < 0 ? -1.0f : 1.0f };
             info.penetration = overlapY;
+
+            info.contactPoint = SDL_FPoint
+            {
+                centerBx,
+                centerAx + (halfHeightA * info.normal.y),
+                
+            };
         }
         return true;
     }
