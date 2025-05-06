@@ -59,9 +59,6 @@ void InGameScreen::HandleInputs(const SDL_Event& event)
 		case SDL_SCANCODE_ESCAPE:
 			uiManager->TooglePause();
 			break;
-		case SDL_SCANCODE_P:
-			uiManager->ShowGameOver(0);
-			break;
 		}
 		break;
 	default:
