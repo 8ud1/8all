@@ -31,19 +31,10 @@ void MainMenu::Enter()
 	LoadRanking();
 
 	Instantiate<UITextButton>(
-		SDL_FPoint{ Utilities::SCREEN_WIDTH * 0.2f , Utilities::SCREEN_HEIGHT * 0.5f},
+		SDL_FPoint{ Utilities::SCREEN_WIDTH * 0.2f , Utilities::SCREEN_HEIGHT * 0.5f + 75.0f},
 		SDL_FPoint{ 200.0f,50.0f },
 		[this]() {game.RequestChangeScene(SceneType::GAME); },
 		("Start Game"),
-		SDL_Color{ 170,170,170,255 },
-		SDL_Color{ 0,170,0,255 }
-	);
-
-	Instantiate<UITextButton>(
-		SDL_FPoint{ Utilities::SCREEN_WIDTH * 0.2f , Utilities::SCREEN_HEIGHT * 0.5f + 75.0f },
-		SDL_FPoint{ 200.0f,50.0f },
-		[&]() {SDL_Log("Option"); },
-		("Option"),
 		SDL_Color{ 170,170,170,255 },
 		SDL_Color{ 0,170,0,255 }
 	);

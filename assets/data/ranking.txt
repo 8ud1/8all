@@ -1,3 +1,0 @@
-DBit 970
-Misto 960
-Julia 910

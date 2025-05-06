@@ -165,7 +165,7 @@ void ResultsCanvas::ShowResults(int finalWiner, PlayerInfo playerInfo, bool ball
 {
 	winner = finalWiner;
 	winnerInfo = playerInfo;
-	ball8Fail = ball8;
+	ball8 = ball8Fail;
 
 	score = CalculateFinalScore();
 
