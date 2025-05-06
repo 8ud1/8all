@@ -41,13 +41,13 @@ void Game::Render()
 void Game::ShowStats()
 {
 	SDL_FRect rect = { 0, 0, 1280, 25 };
-	SDL_Color bgColor = { 0, 50, 0, 255 };
+	SDL_Color bgColor = { 0, 50, 0, 50 };
 	SDL_Color color = { 0, 255, 0, 255 };
 
 	renderer->DrawRect(rect, bgColor);
 	std::string fpsText = "FPS: " + std::to_string(static_cast<int>(1.0f / Time::DeltaTime()));
-	renderer->DrawText(fpsText,Resources::FONT_LITTLE, color, 20.0f, 5.0f);
-	renderer->DrawText("Delta Time: " + std::to_string(Time::DeltaTime()), Resources::FONT_LITTLE, color, 200.0f, 5.0f);
+	renderer->DrawText(fpsText,Resources::CONSOLE, color, 75.0f, 10.0f);
+	renderer->DrawText("Delta Time: " + std::to_string(Time::DeltaTime()), Resources::CONSOLE, color,250.0f, 10.0f);
 }
 
 
@@ -64,7 +64,7 @@ Game::~Game()
 
 bool Game::Start(const char* title)
 {
-	if (!SDL_Init(SDL_INIT_VIDEO))
+	if (!SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO))
 	{
 		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Couldn't initialize SDL: %s", SDL_GetError());
 		return false;
@@ -77,7 +77,6 @@ bool Game::Start(const char* title)
 		return false;
 	}
 
-
 	window = SDL_CreateWindow(title, Utilities::SCREEN_WIDTH, Utilities::SCREEN_HEIGHT, SDL_WINDOW_OPENGL);
 	if (window == NULL)
 	{
@@ -88,12 +87,13 @@ bool Game::Start(const char* title)
 	renderer = std::make_unique<Renderer>(window);
 
 
-	//Todo - load resources on load Scene
-	renderer->LoadFont(Resources::FONT_REGULAR,Resources::FONT_BASIC_PATH, Resources::FONT_REGULAR_SIZE);
-	renderer->LoadFont(Resources::FONT_LITTLE,Resources::FONT_BASIC_PATH, Resources::FONT_LITTLE_SIZE);
-	renderer->LoadFont(Resources::FONT_TITLE,Resources::FONT_BASIC_PATH, Resources::FONT_TITLE_SIZE);
-	
-	renderer->LoadTexture(Resources::BALL,Resources::TEXTURE_BALL_PATH);
+	//Todo - load resources on load Scene	
+
+	renderer->LoadFont(Resources::CONSOLE, Resources::FONT_PATH, 10.0f);
+	renderer->LoadFont(Resources::FONT, Resources::FONT_PATH, Resources::FONT_LITTLE_SIZE);
+	renderer->LoadFont(Resources::TITLE, Resources::FONT_TITLES_PATH, Resources::FONT_REGULAR_SIZE);
+	renderer->LoadFont(Resources::TITLE_BIG, Resources::FONT_TITLES_PATH, Resources::FONT_TITLE_SIZE);
+
 	renderer->LoadTexture(Resources::TABLE, Resources::TABLE_PATH);
 	renderer->LoadTexture(Resources::TEXTURE_BALLS, Resources::TEXTURE_BALLS_PATH);
 
@@ -139,6 +139,12 @@ void Game::RequestChangeScene(SceneType type)
 
 	requestedSceneType = type;
 	isSceneChangeRequested = true;
+}
+
+void Game::RequestRestartScene(SceneType type)
+{
+	isSceneChangeRequested = true;
+	requestedSceneType = type;
 }
 
 void Game::ChangeScene()

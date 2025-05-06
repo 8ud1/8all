@@ -10,17 +10,20 @@
 #include "PauseCanvas.h"
 #include "UIBallSpin.h"
 #include "ShotController.h"
+#include "ResultsCanvas.h"
 
 
 class GameUIManager
 {
 
 private:
+	Game& game;
 
 	GameRules* gameRules;
 	std::unique_ptr<PauseCanvas> pauseCanvas;
 	std::unique_ptr<UIBallSpin> ballSpinUi;
 	std::unique_ptr<ShotController> shotController;
+	std::unique_ptr<ResultsCanvas> results;
 
 	PlayerInfo playerInfo[2];
 
@@ -31,6 +34,7 @@ public:
 	GameUIManager(Game& game, GameRules* gameRules, Ball* whiteball);
 
 	void Update(float deltaTime);
+	void HandleInputs(const SDL_Event& event);
 	void Render(Renderer& renderer);
 
 	ShotController* GetShotController() const { return shotController.get(); }

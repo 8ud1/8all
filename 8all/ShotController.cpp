@@ -10,6 +10,7 @@ void ShotController::HandleMouseDown(float mouseX, float mouseY)
 {
 	if (gameRules->IsTurnInProgress()) return;
 
+	 
 	SDL_FRect ballRect = {
 		whiteBall->transform->position.x - whiteBall->transform->scale.x * 0.5f,
 		whiteBall->transform->position.y - whiteBall->transform->scale.y * 0.5f,
@@ -26,6 +27,7 @@ void ShotController::HandleMouseUp(float mouseX, float mouseY)
 {
 	if (isCharging) ExecuteShot();
 	isCharging = false;
+	chargingVector = { 0.0f,0.0f };
 }
 
 void ShotController::Update(float mouseX, float mouseY)

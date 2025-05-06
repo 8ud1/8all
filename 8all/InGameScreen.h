@@ -38,6 +38,7 @@ public:
 	void Exit() override;
 
 	void LogicUpdate(float deltaTime) override;
+	void PhysicsUpdate(float deltaTime) override;
 	void HandleInputs(const SDL_Event& event) override;
 	void Render(Renderer& renderer) override;
 

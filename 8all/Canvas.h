@@ -41,5 +41,7 @@ public:
 	virtual void Update(float deltaTime) = 0;
 	virtual void Render(Renderer& renderer) = 0;
 
+	virtual void HandleInputs(const SDL_Event& event) {}
+
 };
 

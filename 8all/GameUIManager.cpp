@@ -6,12 +6,12 @@
 #include "Ball.h"
 
 GameUIManager::GameUIManager(Game& game, GameRules* gameRules, Ball* whiteball)
-	: gameRules(gameRules)
+	: gameRules(gameRules), game(game)
 {
 	pauseCanvas = std::make_unique<PauseCanvas>(
 		[&]() {pauseCanvas->Hide(); },
 		[&]() {game.RequestChangeScene(SceneType::MAIN_MENU); },
-		[&]() {SDL_Log("Restart"); },
+		[&]() {game.RequestRestartScene(SceneType::GAME); },
 		false
 	);
 
@@ -20,28 +20,49 @@ GameUIManager::GameUIManager(Game& game, GameRules* gameRules, Ball* whiteball)
 		SDL_FPoint{ Utilities::SCREEN_WIDTH * 0.5f, Utilities::SCREEN_HEIGHT - 45.0f },
 		SDL_FPoint{ 75.0f, 75.0f }
 	);
-
 	shotController = std::make_unique<ShotController>(gameRules,whiteball, ballSpinUi.get());
+	results = std::make_unique<ResultsCanvas>(game);
 }
 
 void GameUIManager::Update(float deltaTime)
 {
-	pauseCanvas->Update(deltaTime);
-	if (!shotController->IsCharging())
-		ballSpinUi->Update(deltaTime);
+
+	if (results->IsActive())
+	{
+		results->Update(deltaTime);
+	}
+	else
+	{
+		pauseCanvas->Update(deltaTime);
+		if (!shotController->IsCharging())
+			ballSpinUi->Update(deltaTime);
+	}
+}
+
+void GameUIManager::HandleInputs(const SDL_Event& event)
+{
+	results->HandleInputs(event);
 }
 
 
 void GameUIManager::Render(Renderer& renderer)
 {
 
-	if (pauseCanvas->IsActive())
-		pauseCanvas->Render(renderer);
-	else
+	if (results->IsActive())
 	{
+		results->Render(renderer);
+		return;
+	}
+
+	if (pauseCanvas->IsActive())
+	{
+		pauseCanvas->Render(renderer);
+		return;
+	}
+
 		ballSpinUi->Render(renderer);
 		shotController->Render(renderer);
-	}
+
 
 	SDL_Color player01Color = { 255,255,255,255 };
 	SDL_Color player02Color = { 255,255,255,255 };
@@ -56,21 +77,21 @@ void GameUIManager::Render(Renderer& renderer)
 
 	}
 
-	renderer.DrawText("PLAYER 01", Resources::FONT_REGULAR, player01Color, 100, 50);
-	renderer.DrawText("Turn : " + std::to_string(playerInfo[0].turns), Resources::FONT_REGULAR, player01Color, 100, 100);
-	renderer.DrawText("Points : " + std::to_string(playerInfo[0].points), Resources::FONT_REGULAR, player01Color, 100, 150);
-	renderer.DrawText("Fails : " + std::to_string(playerInfo[0].fails), Resources::FONT_REGULAR, player01Color, 100, 200);
+	renderer.DrawText("PLAYER 01", Resources::TITLE, player01Color, 120, 25);
+	renderer.DrawText("Turn : " + std::to_string(playerInfo[0].turns), Resources::FONT, player01Color, 100, 70);
+	renderer.DrawText("Points : " + std::to_string(playerInfo[0].points), Resources::FONT, player01Color, 100, 110);
+	renderer.DrawText("Fails : " + std::to_string(playerInfo[0].fails), Resources::FONT, player01Color, 100, 150);
 
 	float player2X = Utilities::SCREEN_WIDTH - 100;
-	renderer.DrawText("PLAYER 02", Resources::FONT_REGULAR, player02Color, player2X, 50);
-	renderer.DrawText("Turn " + std::to_string(playerInfo[1].turns), Resources::FONT_REGULAR, player02Color, player2X, 100);
-	renderer.DrawText("Points : " + std::to_string(playerInfo[1].points), Resources::FONT_REGULAR, player02Color, player2X, 150);
-	renderer.DrawText("Fails : " + std::to_string(playerInfo[1].fails), Resources::FONT_REGULAR, player02Color, player2X, 200);
+	renderer.DrawText("PLAYER 02", Resources::TITLE, player02Color, player2X - 20, 25);
+	renderer.DrawText("Turn " + std::to_string(playerInfo[1].turns), Resources::FONT, player02Color, player2X, 70);
+	renderer.DrawText("Points : " + std::to_string(playerInfo[1].points), Resources::FONT, player02Color, player2X, 110);
+	renderer.DrawText("Fails : " + std::to_string(playerInfo[1].fails), Resources::FONT, player02Color, player2X, 150);
 }
 
 void GameUIManager::ShowGameOver(int winner)
 {
-	//ocultar toda la ui i mostrar canvas de resultados.
+	results->ShowResults(winner,playerInfo[winner]);
 }
 
 void GameUIManager::TooglePause()

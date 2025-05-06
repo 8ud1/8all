@@ -2,6 +2,7 @@
 #include "Ball.h"
 
 #include "Utilities.h"
+#include "GameUIManager.h"
 
 
 void GameRules::AssignBallsGroup(Ball* ball)
@@ -114,13 +115,12 @@ void GameRules::OnHoleTrigger(PhysicsObject* obj)
 		foulCommitted = true;
 		ResetWhiteBall();
 	}
+	else if(ballNum == 7)
+	{
+		CheckBlackBall();
+	}
 	else
 	{
-		if (ball->GetId() == 7)
-		{
-			CheckBlackBall();
-		}
-
 		turnSunkBalls.push_back(ball);
 		ball->RigidBody()->SetStatic(true);
 
@@ -146,27 +146,13 @@ void GameRules::OnPlayerShot()
 	++playerInfo[currentPlayer].turns;
 }
 
-void GameRules::EndGame(int winner)
-{
-	SDL_Log("GameOver with winner -> %d", winner);
-}
-
-
-
-bool GameRules::CheckWinCondition()
-{
-	return false;
-}
 
 void GameRules::CheckBlackBall()
 {
-	if (foulCommitted)
-	{
-		EndGame(1 - currentPlayer);
-	}
-	else
-	{
-		EndGame(currentPlayer);
-	}
+	turnInProgress = false;
+	gameOver = true;
+	winnerPlayer = foulCommitted ? 1 - currentPlayer : winnerPlayer;
+
+	uiManager->ShowGameOver(winnerPlayer);
 }
 

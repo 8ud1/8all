@@ -49,6 +49,12 @@ void Ranking::Save()
 	outputFile.close();
 }
 
+void Ranking::Clear()
+{
+	entries.clear();
+	Save();
+}
+
 bool Ranking::AddEntry(const std::string& playerName, int score)
 {
 	bool result = false;
@@ -70,7 +76,7 @@ bool Ranking::AddEntry(const std::string& playerName, int score)
 	
 }
 
-const std::vector<RankingEntry>& Ranking::GetEntries() const
+const std::vector<RankingEntry> Ranking::GetEntries() const
 {
 	return entries;
 }

@@ -9,6 +9,7 @@ class UIButton : public GameObject
 
 protected:
 	bool isHovered;
+	bool wasMouseDown = false;
 	std::function<void()> OnClick;
 	void CheckMouseInteraction();
 

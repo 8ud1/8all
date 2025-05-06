@@ -1,10 +1,12 @@
 #pragma once
 
+#include <memory>
 #include <vector>
 
 class Game;
 class Ball;
 class PhysicsObject;
+class GameUIManager;
 
 
 enum class BallGroup{NONE, SOLID , STRIPS};
@@ -23,10 +25,12 @@ class GameRules
 {
 	Ball* whiteBall;
 	std::vector<Ball*>& balls;
-	std::vector<Ball*> turnSunkBalls;
+
+	GameUIManager* uiManager;
 
 	PlayerInfo playerInfo[2];
 
+	std::vector<Ball*> turnSunkBalls;
 	int sunkBalls[2]{ 0,0 };
 	
 	int currentPlayer = 0;
@@ -58,14 +62,11 @@ public:
 	void OnHoleTrigger(PhysicsObject* obj);
 	void OnPlayerShot();
 	
-	void EndGame(int winner);
-
 	void ResetWhiteBall();
-	bool CheckWinCondition();
 	void CheckBlackBall();
 
 	void SetTurnInProgress(bool value) { turnInProgress = value; };
-
+	void SetUiManager(GameUIManager* uiManagerRef) { uiManager = uiManagerRef; }
 
 
 	

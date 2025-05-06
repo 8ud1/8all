@@ -29,7 +29,7 @@ void PauseCanvas::InitCanvas()
 		SDL_FPoint{ Utilities::SCREEN_WIDTH * 0.5f - 100.0f, Utilities::SCREEN_HEIGHT * 0.45f - 25.0f + 75 },
 		SDL_FPoint{ 200.0f,50.0f },
 		[&]() { OnRestart(); },
-		("Retry"),
+		("Reset"),
 		SDL_Color({ 170,170,170,255 }),
 		SDL_Color({ 0,170,0,255 })
 	);
@@ -64,7 +64,7 @@ void PauseCanvas::Render(Renderer& renderer)
 		uiElement->Render(renderer);
 	}
 
-	renderer.DrawText("Pause", Resources::FONT_TITLE, SDL_Color{ 255,255,255,255 },
+	renderer.DrawText("Pause", Resources::TITLE_BIG, SDL_Color{ 255,255,255,255 },
 		Utilities::SCREEN_WIDTH * 0.5f, Utilities::SCREEN_HEIGHT * 0.2f);
 
 	

@@ -38,7 +38,7 @@ void Rigidbody::ApplyTorqueFromImpulse(const SDL_FPoint& contactPoint, const SDL
 	float rCrossImpulse = r.x * impulse.y - r.y * impulse.x;
 
 	// I = 0.5f* massa * radi
-	float inertia = 0.5f * mass * 1.0f;
+	float inertia = 0.5f * mass * 2.5f;
 	if (inertia == 0.0f) return;
 
 	float torqueBoostFactor = 1.2; 

@@ -21,10 +21,11 @@ private:
 public:
 	Ranking(const std::string& fileName);
 
-	const std::vector<RankingEntry>& GetEntries() const;
+	const std::vector<RankingEntry> GetEntries() const;
 
 	void Load();
 	void Save();
+	void Clear();
 
 	bool AddEntry(const std::string& playerName, int score);
 };

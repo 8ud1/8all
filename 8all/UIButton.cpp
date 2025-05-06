@@ -16,21 +16,26 @@ void UIButton::CheckMouseInteraction()
 
 	bool nowHovered = SDL_PointInRectFloat(&mousePos, &absoluteBounds);
 
+	bool isMouseDown = (mouseState & SDL_BUTTON_LMASK);
+
+
 	isHovered = nowHovered;
 
-	if (isHovered && (mouseState & SDL_BUTTON_LMASK))
+	if (isHovered && isMouseDown && !wasMouseDown)
 	{
 		if (OnClick)
 			OnClick();
 	}
+
+	wasMouseDown = isMouseDown;
 	
 }
 
 UIButton::UIButton(SDL_FPoint position, SDL_FPoint size, std::function<void()> clickAction)
 	: GameObject("button",GameObjectType::UIButton), OnClick(clickAction)
-	
-{
-	isHovered = false;
+{	
+	isHovered =  false;
+	wasMouseDown = true;
 
 	transform = std::make_unique<Transform>();
 
@@ -49,7 +54,7 @@ void UIButton::Render(Renderer& renderer)
 	SDL_Color color = isHovered ? SDL_Color{ 0, 255, 0, 255 } : SDL_Color{ 255, 0, 0, 255 };
 
 	renderer.DrawRect(*transform, color);
-	renderer.DrawText("Click Me", Resources::FONT_REGULAR, { 255,255,255,255 }, 
+	renderer.DrawText("Click Me", Resources::FONT, { 255,255,255,255 }, 
 		transform->position.x + transform->scale.x *0.5f,
 		transform->position.y + transform->scale.y * 0.5f);
 }

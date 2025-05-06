@@ -1,6 +1,7 @@
 #pragma once
 
 #include <SDL3/SDL.h>
+#include <SDL3/SDL_audio.h>
 #include <memory>
 
 #include "Renderer.h"
@@ -27,7 +28,6 @@ private:
 	SceneType requestedSceneType;
 	bool isSceneChangeRequested;
 
-
 	void HandleInputs();
 	void Update();
 	void Render();
@@ -46,5 +46,9 @@ public:
 	void Cleanup();
 
 	void RequestChangeScene(SceneType type);
+
+	void RequestRestartScene(SceneType type);
+
+	SDL_Window* GetWindow() const { return window; }
 };
 

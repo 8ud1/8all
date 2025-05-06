@@ -22,11 +22,8 @@ void InGameScreen::Enter()
 {
 	SetupTable();
 	SetupBalls();
-
 	gameRules = std::make_unique<GameRules>(whiteBall, balls);
-
 	SetupUI();
-
 }
 
 
@@ -62,19 +59,26 @@ void InGameScreen::HandleInputs(const SDL_Event& event)
 		case SDL_SCANCODE_ESCAPE:
 			uiManager->TooglePause();
 			break;
+		case SDL_SCANCODE_P:
+			uiManager->ShowGameOver(0);
+			break;
 		}
 		break;
 	default:
 		break;
 	}
+
+	uiManager->HandleInputs(event);
 }
 
 void InGameScreen::LogicUpdate(float deltaTime)
 {
-	Scene::LogicUpdate(deltaTime);
 	uiManager->Update(deltaTime);
 
-	if (gameRules->IsGameOver()) return;
+	if(gameRules->IsGameOver() || uiManager->GetPauseCanvas()->IsActive()) return;
+	
+	Scene::LogicUpdate(deltaTime);
+
 
 	if (gameRules->IsTurnInProgress())
 	{
@@ -93,6 +97,12 @@ void InGameScreen::LogicUpdate(float deltaTime)
 		}
 	}
 
+}
+
+void InGameScreen::PhysicsUpdate(float deltaTime)
+{
+	if (gameRules->IsGameOver() || uiManager->GetPauseCanvas()->IsActive()) return;
+	Scene::PhysicsUpdate(deltaTime);
 }
 
 void InGameScreen::Render(Renderer& renderer)
@@ -132,15 +142,20 @@ void InGameScreen::SetupTable()
 
 void InGameScreen::SetupBalls()
 {
+	SDL_FPoint middleBoard{
+		640.0f,
+		340.0f
+	};
+
 	BillardRack rack;
 	for (auto& placement : rack.GenerateRack())
 	{
-		float x = Utilities::SCREEN_WIDTH * 0.6f + placement.row * 25.0f;
-		float y = Utilities::SCREEN_HEIGHT * 0.5f - (placement.row * 0.5f * 25.0f) + 25.0f * placement.column + 12.5f;
+		float x = middleBoard.x + 100 + placement.row * 30.0f;
+		float y = middleBoard.y - (placement.row * 0.5f * 30.0f) + 30.0f * placement.column ;
 		balls.push_back(Instantiate<Ball>("ball_" + std::to_string(placement.number),placement.number,SDL_FPoint{ x, y }));
 	}
 
-	whiteBall = Instantiate<Ball>("white ball", 15, SDL_FPoint{ 350.0f,Utilities::SCREEN_HEIGHT * 0.5f });
+	whiteBall = Instantiate<Ball>("white ball", 15, SDL_FPoint{ middleBoard.x - 200 ,middleBoard.y });
 }
 
 
@@ -148,6 +163,8 @@ void InGameScreen::SetupUI()
 {
 	uiManager = std::make_unique<GameUIManager>(
 		game, gameRules.get(), whiteBall);
+
+	gameRules->SetUiManager(uiManager.get());
 }
 
 

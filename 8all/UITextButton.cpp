@@ -15,7 +15,7 @@ void UITextButton::Render(Renderer& renderer)
 
 	renderer.DrawText(
 		textBtn,
-		Resources::FONT_REGULAR,
+		Resources::FONT,
 		{ 255,255,255,255 },
 		transform->position.x + transform->scale.x * 0.5f,
 		transform->position.y + transform->scale.y * 0.5f
