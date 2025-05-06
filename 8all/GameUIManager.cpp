@@ -89,9 +89,9 @@ void GameUIManager::Render(Renderer& renderer)
 	renderer.DrawText("Fails : " + std::to_string(playerInfo[1].fails), Resources::FONT, player02Color, player2X, 150);
 }
 
-void GameUIManager::ShowGameOver(int winner)
+void GameUIManager::ShowGameOver(int winner, bool ball8Fail)
 {
-	results->ShowResults(winner,playerInfo[winner]);
+	results->ShowResults(winner,playerInfo[winner], ball8Fail);
 }
 
 void GameUIManager::TooglePause()

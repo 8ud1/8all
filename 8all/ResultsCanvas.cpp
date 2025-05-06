@@ -8,6 +8,23 @@
 #include "UITextButton.h"
 #include "Ranking.h"
 
+#include <math.h>
+
+int ResultsCanvas::CalculateFinalScore()
+{
+	int finalScore = 1000;
+
+	if (ball8) finalScore -= 500;
+
+	finalScore -= winnerInfo.turns * 30;
+	finalScore += winnerInfo.points * 20;
+	finalScore -= winnerInfo.fails * 100;
+
+	finalScore = std::max(finalScore, 0);
+
+	return finalScore;
+}
+
 void ResultsCanvas::SaveScore()
 {
 	uiElements.clear();
@@ -16,7 +33,7 @@ void ResultsCanvas::SaveScore()
 
 	ranking->Load();
 
-	ranking->AddEntry(inputName, 1280);
+	ranking->AddEntry(inputName, score);
 
 	rankingEntries =  ranking->GetEntries();
 
@@ -83,7 +100,7 @@ void ResultsCanvas::Render(Renderer& renderer)
 	{
 		//Tilte
 		std::string title = "Player 0" + std::to_string(winner + 1) + " Won!";
-		renderer.DrawText(title.c_str(), Resources::TITLE, SDL_Color{ 255,255,255,255 }, Utilities::SCREEN_WIDTH * 0.5f, Utilities::SCREEN_HEIGHT * 0.2f);
+		renderer.DrawText(title.c_str(), Resources::TITLE_BIG, SDL_Color{ 255,255,255,255 }, Utilities::SCREEN_WIDTH * 0.5f, Utilities::SCREEN_HEIGHT * 0.2f);
 		renderer.DrawText("Enter your Name", Resources::FONT, SDL_Color{ 255,255,255,255 }, Utilities::SCREEN_WIDTH * 0.5f, Utilities::SCREEN_HEIGHT * 0.4f);
 		renderer.DrawText(inputName, Resources::FONT, SDL_Color{ 255,255,255,255 }, Utilities::SCREEN_WIDTH * 0.5f, Utilities::SCREEN_HEIGHT * 0.45f);
 
@@ -92,17 +109,20 @@ void ResultsCanvas::Render(Renderer& renderer)
 	else
 	{
 		renderer.DrawText("Ranking", Resources::TITLE_BIG, SDL_Color{ 255,255,255,255 }, Utilities::SCREEN_WIDTH * 0.5f, Utilities::SCREEN_HEIGHT * 0.2f);
-
-
+		
+		
 		int it = rankingEntries.size() < 5 ? rankingEntries.size() : 5;
 		std::string text;
 		for (int i = 0; i < it; i++)
 		{
-			text = std::to_string(i + 1) + " -> " + rankingEntries[i].playerName + "_____________________" + std::to_string(rankingEntries[i].score);
+			text = std::to_string(i + 1) + " -> " + rankingEntries[i].playerName + " _____________________ " + std::to_string(rankingEntries[i].score);
 			renderer.DrawText(text, Resources::FONT, SDL_Color{ 255,255,255,255 }, Utilities::SCREEN_WIDTH * 0.5f, Utilities::SCREEN_HEIGHT * 0.4f + (i * 30));
 		}
 	}
 	
+	std::string scoreText = std::to_string(score);
+	renderer.DrawText(std::string("Your Score = " + scoreText), Resources::TITLE, SDL_Color{ 255,255,255,255 }, Utilities::SCREEN_WIDTH * 0.5f, Utilities::SCREEN_HEIGHT * 0.3f);
+
 
 	for (auto& uiElement : uiElements)
 	{
@@ -141,12 +161,16 @@ void ResultsCanvas::HandleInputs(const SDL_Event& event)
 	}
 }
 
-void ResultsCanvas::ShowResults(int finalWiner, PlayerInfo playerInfo)
+void ResultsCanvas::ShowResults(int finalWiner, PlayerInfo playerInfo, bool ball8Fail)
 {
 	winner = finalWiner;
+	winnerInfo = playerInfo;
+	ball8Fail = ball8;
+
+	score = CalculateFinalScore();
+
 	Canvas::Show();
 	SDL_StartTextInput(game.GetWindow());
-
 }
 
 void ResultsCanvas::GoToMainMenu()

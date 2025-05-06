@@ -45,6 +45,8 @@ class GameRules
 	void AssignBallsGroup(Ball* ball);
 	int GetTargetPlayerForBall(int ballNum) const;
 
+	bool HasBallsRemaining(int player);
+
 public:
 	GameRules(Ball* whiteBall, std::vector<Ball*>& balls)
 		: whiteBall(whiteBall), balls(balls) {	}
@@ -67,10 +69,6 @@ public:
 
 	void SetTurnInProgress(bool value) { turnInProgress = value; };
 	void SetUiManager(GameUIManager* uiManagerRef) { uiManager = uiManagerRef; }
-
-
-	
-
 };
 
 

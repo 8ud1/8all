@@ -41,7 +41,7 @@ public:
 	UIBallSpin* GetBallSpinUI() { return ballSpinUi.get(); }
 	PauseCanvas* GetPauseCanvas() { return pauseCanvas.get(); }
 
-	void ShowGameOver(int winner);
+	void ShowGameOver(int winner, bool ball8Fail = false);
 	void TooglePause();
 
 	void PrepareNextTurn(int nextPlayer, PlayerInfo& pi, PlayerInfo& pi2);

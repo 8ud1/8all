@@ -46,6 +46,37 @@ int GameRules::GetTargetPlayerForBall(int ballNum) const
 		return 1;
 }
 
+bool GameRules::HasBallsRemaining(int player)
+{
+
+	BallGroup checketGroup = playerInfo[player].ballsGroup;
+
+	std::vector<int> groupIndex;
+
+	switch (checketGroup)
+	{
+	case BallGroup::NONE:
+		return true;
+		break;
+	case BallGroup::SOLID:
+		groupIndex = { 0,1,2,3,4,5,6 };
+		break;
+	case BallGroup::STRIPS:
+		groupIndex = { 8,9,10,11,12,13,14 };
+		break;
+	}
+
+	for (auto& ball : balls)
+	{
+		if (std::find(groupIndex.begin(), groupIndex.end(), ball->GetId()) != groupIndex.end()) 
+		{
+			if (!ball->RigidBody()->GetIsStatic()) return true;
+		}
+	}
+
+	return false;
+}
+
 void GameRules::EvaluateTurn()
 {
 	if (gameOver) return;
@@ -151,8 +182,17 @@ void GameRules::CheckBlackBall()
 {
 	turnInProgress = false;
 	gameOver = true;
-	winnerPlayer = foulCommitted ? 1 - currentPlayer : winnerPlayer;
 
-	uiManager->ShowGameOver(winnerPlayer);
+	if (HasBallsRemaining(currentPlayer))
+	{
+		winnerPlayer = 1 - currentPlayer;
+		uiManager->ShowGameOver(winnerPlayer,true);
+	}
+	else
+	{
+		winnerPlayer = currentPlayer;
+		uiManager->ShowGameOver(winnerPlayer, false);
+	}
+	
 }
 
